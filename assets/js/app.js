@@ -18,8 +18,27 @@ function renderHome() {
   `;
 }
 
-function renderQuran() {
-  app.innerHTML = `<h2>আল-কুরআন বিভাগ</h2><p>শীঘ্রই সম্পূর্ণ সূরা তালিকা যুক্ত হবে।</p>`;
+async function renderQuran() {
+  const response = await fetch("data/quran/surah-list.json");
+  const data = await response.json();
+
+  let content = `
+    <h2>আল-কুরআন</h2>
+    <div class="modules">
+  `;
+
+  data.surahs.forEach(surah => {
+    content += `
+      <div class="card" onclick="loadSurah(${surah.number})">
+        <h3>${surah.number}. ${surah.name}</h3>
+        <p>${surah.arabic_name}</p>
+        <small>আয়াত সংখ্যা: ${surah.ayah_count}</small>
+      </div>
+    `;
+  });
+
+  content += `</div>`;
+  app.innerHTML = content;
 }
 
 function renderHadith() {
@@ -78,5 +97,29 @@ async function renderIman() {
   });
 
   content += `</div>`;
+  app.innerHTML = content;
+}
+
+async function loadSurah(number) {
+  const fileName = number.toString().padStart(3, "0") + "-al-fatiha.json";
+  const response = await fetch(`data/quran/${fileName}`);
+  const data = await response.json();
+
+  let content = `
+    <h2>${data.name} (${data.arabic_name})</h2>
+  `;
+
+  data.verses.forEach(verse => {
+    content += `
+      <div class="card">
+        <p style="font-size:22px; direction:rtl;">${verse.arabic}</p>
+        <p>${verse.bangla}</p>
+        <small>আয়াত: ${verse.ayah}</small>
+      </div>
+    `;
+  });
+
+  content += `<br><button onclick="location.hash='#quran'">← সূরা তালিকায় ফিরে যান</button>`;
+
   app.innerHTML = content;
 }
