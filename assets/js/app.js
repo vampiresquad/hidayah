@@ -11,6 +11,7 @@ function renderHome() {
       <div class="card" onclick="location.hash='#quran'">আল-কুরআন</div>
       <div class="card" onclick="location.hash='#hadith'">সহিহ হাদিস</div>
       <div class="card" onclick="location.hash='#pillars'">ইসলামের মূল ভিত্তি</div>
+      <div class="card" onclick="location.hash='#iman'">ঈমানের ৬টি মূলনীতি</div>
       <div class="card" onclick="location.hash='#ramadan'">রমজান বিভাগ</div>
       <div class="card" onclick="location.hash='#dua'">দৈনিক দোয়া</div>
     </section>
