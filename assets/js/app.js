@@ -106,7 +106,7 @@ async function loadSurah(fileName) {
     const response = await fetch(`data/quran/${fileName}`);
     const data = await response.json();
 
-    let content = `
+let content = `
   <div style="text-align:center; margin-bottom:30px;">
     <h2>${data.name}</h2>
     <h3 style="font-family:'Amiri'; direction:rtl;">${data.arabic_name}</h3>
@@ -128,7 +128,7 @@ async function loadSurah(fileName) {
       `;
     });
 
-    content += `<br><button class="button" onclick="location.hash='#quran'">← সূরা তালিকায় ফিরে যান</button>`;
+content += `<br><button class="button" onclick="location.hash='#quran'">← সূরা তালিকায় ফিরে যান</button>`;
 
   } catch (error) {
     app.innerHTML = `<p>এই সূরাটি এখনো যুক্ত হয়নি।</p>
