@@ -7,6 +7,7 @@ const routes = {
   "#iman": renderIman,
   "#ramadan": renderRamadan,
   "#dua": renderDua
+  "#bookmarks": renderBookmarks,
 };
 
 function router() {
