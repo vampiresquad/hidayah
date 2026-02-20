@@ -56,3 +56,26 @@ function renderRamadan() {
 function renderDua() {
   app.innerHTML = `<h2>দৈনিক দোয়া</h2><p>দোয়া তালিকা যুক্ত হবে।</p>`;
 }
+
+async function renderIman() {
+  const response = await fetch("data/iman.json");
+  const data = await response.json();
+
+  let content = `
+    <h2>${data.title}</h2>
+    <div class="modules">
+  `;
+
+  data.articles.forEach(item => {
+    content += `
+      <div class="card">
+        <h3>${item.name}</h3>
+        <p>${item.description}</p>
+        <small>রেফারেন্স: ${item.reference}</small>
+      </div>
+    `;
+  });
+
+  content += `</div>`;
+  app.innerHTML = content;
+}
