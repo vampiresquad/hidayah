@@ -4,6 +4,7 @@ const routes = {
   "#quran": renderQuran,
   "#hadith": renderHadith,
   "#pillars": renderPillars,
+  "#iman": renderIman,
   "#ramadan": renderRamadan,
   "#dua": renderDua
 };
