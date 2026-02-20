@@ -1,1 +1,32 @@
+/* assets/css/theme.css */
+:root {
+  /* Primary Palette */
+  --color-primary: #0E7C3A; /* Emerald Green */
+  --color-accent: #C8A951;  /* Soft Gold */
+  
+  /* Neutral Palette */
+  --color-bg-light: #FFFFFF;
+  --color-text-main: #222222;
+  --color-text-muted: #555555;
+  --color-border: #EEEEEE;
 
+  /* Typography */
+  --font-bangla: 'YourBengaliFont', sans-serif;
+  --font-arabic: 'YourArabicFont', serif;
+  
+  /* Spacing & Layout */
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 32px;
+  --border-radius: 8px;
+}
+
+/* Optional Dark Mode Foundation */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg-light: #121212;
+    --color-text-main: #E0E0E0;
+    --color-text-muted: #AAAAAA;
+    --color-border: #333333;
+  }
+}
