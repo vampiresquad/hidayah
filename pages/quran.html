@@ -14,10 +14,21 @@
     <div id="header-placeholder"></div>
 
     <main class="container">
-        <div id="surah-header" class="page-header"></div>
-        
-        <div id="ayah-container" class="evidences-container"></div>
+        <div id="surah-list-view">
+            <div class="page-header">
+                <h2>আল-কুরআন</h2>
+                <p>১১৪ টি সূরার তালিকা</p>
+            </div>
+            <div id="surah-grid" class="module-grid"></div>
+        </div>
+
+        <div id="single-surah-view" style="display: none;">
+            <button onclick="showSurahList()" class="back-btn">← সূচিপত্রে ফিরে যান</button>
+            <div id="surah-header" class="page-header"></div>
+            <div id="ayah-container" class="evidences-container"></div>
+        </div>
     </main>
+
 
     <div id="footer-placeholder"></div>
 
