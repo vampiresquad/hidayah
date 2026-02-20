@@ -1,1 +1,16 @@
-
+{
+  "surahs": [
+    {
+      "number": 1,
+      "name": "Al-Fatiha",
+      "arabic_name": "الفاتحة",
+      "ayah_count": 7
+    },
+    {
+      "number": 2,
+      "name": "Al-Baqarah",
+      "arabic_name": "البقرة",
+      "ayah_count": 286
+    }
+  ]
+}
