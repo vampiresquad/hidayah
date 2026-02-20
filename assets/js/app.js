@@ -10,11 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // ৩. রাউটিং লজিক: পেজ অনুযায়ী ডেটা লোড করা
     if (currentPage === 'pillars.html') {
         loadPillarsData();
+    } else if (currentPage === 'quran.html') {
+        // আপাতত ডিফল্টভাবে সূরা আল-ফাতিহা লোড করছি
+        loadSurahData('001-al-fatiha.json'); 
     }
 });
-
-// ... (নিচের loadPillarsData ফাংশনটি আগের মতোই থাকবে)
-
 
 /**
  * 'ইসলামের ভিত্তি' পেজের জন্য ডেটা লোড ও রেন্ডার করা
@@ -63,5 +63,61 @@ async function loadPillarsData() {
         contentContainer.innerHTML = htmlContent;
     } else if (contentContainer) {
         contentContainer.innerHTML = '<p class="error">ডেটা লোড করতে ব্যর্থ হয়েছে।</p>';
+    }
+}
+
+/**
+ * নির্দিষ্ট সূরার ডেটা লোড ও রেন্ডার করার ফাংশন
+ * @param {string} fileName - JSON ফাইলের নাম
+ */
+async function loadSurahData(fileName) {
+    const surahHeader = document.getElementById('surah-header');
+    const ayahContainer = document.getElementById('ayah-container');
+    
+    if (ayahContainer) {
+        ayahContainer.innerHTML = '<p class="loading">কুরআনের আয়াত লোড হচ্ছে...</p>';
+    }
+
+    // JSON থেকে ডেটা আনা
+    const data = await fetchJSONData(`../data/quran/${fileName}`);
+
+    if (data && surahHeader && ayahContainer) {
+        // ১. সূরার হেডার (Surah Meta) রেন্ডার করা
+        surahHeader.innerHTML = `
+            <h2>সূরা ${data.surah_meta.bangla_name} (${data.surah_meta.arabic_name})</h2>
+            <p><strong>অবতীর্ণ:</strong> ${data.surah_meta.revelation_type === 'Meccan' ? 'মাক্কী' : 'মাদানী'} | <strong>আয়াত সংখ্যা:</strong> ${data.surah_meta.total_ayahs}</p>
+            <p class="intro-text" style="margin-top: 10px;"><em>${data.surah_meta.intro_tafsir}</em></p>
+        `;
+
+        // ২. আয়াতগুলো লুপ করে রেন্ডার করা
+        let htmlContent = '';
+        data.verses.forEach(verse => {
+            htmlContent += `
+                <div class="evidence-card ayah-card" style="margin-bottom: 20px;">
+                    <div class="evidence-header">
+                        <span class="badge badge-quran">আয়াত ${verse.ayah_number}</span>
+                    </div>
+                    
+                    <div class="evidence-body">
+                        <p class="arabic-text" dir="rtl">${verse.arabic}</p>
+                        <p class="pronunciation-text"><strong>উচ্চারণ:</strong> ${verse.pronunciation}</p>
+                        <p class="translation-text"><strong>অর্থ:</strong> ${verse.translation}</p>
+                    </div>
+
+                    <div class="evidence-explanation">
+                        <strong>সংক্ষিপ্ত তাফসির:</strong> <p>${verse.tafsir}</p>
+                    </div>
+                    
+                    <div class="tags-container" style="margin-top: 15px;">
+                        ${verse.tags.map(tag => `<span style="font-size: 0.8rem; background: #eee; padding: 4px 10px; border-radius: 12px; margin-right: 5px; color: #555;">#${tag}</span>`).join('')}
+                    </div>
+                </div>
+            `;
+        });
+
+        // ৩. কন্টেইনারে জেনারেট করা HTML বসিয়ে দেওয়া
+        ayahContainer.innerHTML = htmlContent;
+    } else if (ayahContainer) {
+        ayahContainer.innerHTML = '<p class="error">ডেটা লোড করতে ব্যর্থ হয়েছে।</p>';
     }
 }
