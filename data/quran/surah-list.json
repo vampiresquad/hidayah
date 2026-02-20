@@ -4,13 +4,15 @@
       "number": 1,
       "name": "Al-Fatiha",
       "arabic_name": "الفاتحة",
-      "ayah_count": 7
+      "ayah_count": 7,
+      "file": "001-al-fatiha.json"
     },
     {
       "number": 2,
       "name": "Al-Baqarah",
       "arabic_name": "البقرة",
-      "ayah_count": 286
+      "ayah_count": 286,
+      "file": "002-al-baqarah.json"
     }
   ]
 }
