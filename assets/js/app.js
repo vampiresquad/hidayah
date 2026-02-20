@@ -25,8 +25,28 @@ function renderHadith() {
   app.innerHTML = `<h2>সহিহ হাদিস বিভাগ</h2><p>হাদিস ডেটাবেস প্রস্তুত হচ্ছে।</p>`;
 }
 
-function renderPillars() {
-  app.innerHTML = `<h2>ইসলামের মূল ভিত্তি</h2><p>৫টি স্তম্ভ ও ৬টি ঈমান বিস্তারিত আসছে।</p>`;
+async function renderPillars() {
+  const response = await fetch("data/pillars.json");
+  const data = await response.json();
+
+  let content = `
+    <h2>${data.title}</h2>
+    <div class="modules">
+  `;
+
+  data.pillars.forEach(pillar => {
+    content += `
+      <div class="card">
+        <h3>${pillar.name}</h3>
+        <p>${pillar.description}</p>
+        <small>রেফারেন্স: ${pillar.reference}</small>
+      </div>
+    `;
+  });
+
+  content += `</div>`;
+
+  app.innerHTML = content;
 }
 
 function renderRamadan() {
