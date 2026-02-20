@@ -1,43 +1,67 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hidayah — Islamic Knowledge Platform</title>
-
-  <!-- Arabic Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" href="assets/css/base.css">
-  <link rel="stylesheet" href="assets/css/layout.css">
-  <link rel="stylesheet" href="assets/css/components.css">
-  <link rel="stylesheet" href="assets/css/theme.css">
-</head>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Hidayah - বিশুদ্ধ ইসলামিক জ্ঞানের একটি অসাম্প্রদায়িক, দলীল-ভিত্তিক ও উন্মুক্ত প্ল্যাটফর্ম।">
+    <title>Hidayah | বিশুদ্ধ ইসলামিক জ্ঞান</title>
+    
+    <link rel="stylesheet" href="assets/css/theme.css">
+    <link rel="stylesheet" href="assets/css/base.css">
+    <link rel="stylesheet" href="assets/css/layout.css">
+    
+    </head>
 <body>
+    <header class="site-header">
+        <div class="container header-content">
+            <a href="index.html" class="logo">
+                <h2>Hidayah</h2>
+            </a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="index.html" class="active">মূল পাতা</a></li>
+                    <li><a href="pages/quran.html">কুরআন</a></li>
+                    <li><a href="pages/hadith.html">হাদিস</a></li>
+                    <li><a href="pages/pillars.html">ইসলামের ভিত্তি</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
 
-  <header class="navbar">
-    <div class="logo">Hidayah</div>
-    <nav>
-      <a href="#home">হোম</a>
-      <a href="#quran">কুরআন</a>
-      <a href="#hadith">হাদিস</a>
-      <a href="#pillars">ইসলামের ভিত্তি</a>
-      <a href="#iman">ঈমান</a>
-      <a href="#ramadan">রমজান</a>
-      <a href="#dua">দোয়া</a>
-    </nav>
-  </header>
+    <main class="container">
+        <section class="hero">
+            <h1 class="hero-title">বিশুদ্ধ ইসলামিক জ্ঞানের নির্ভরযোগ্য প্ল্যাটফর্ম</h1>
+            <p class="hero-subtitle">কুরআন ও সহীহ হাদিসের আলোকে একটি অসাম্প্রদায়িক, দলীল-ভিত্তিক ও উন্মুক্ত জ্ঞানভাণ্ডার।</p>
+        </section>
 
-  <main class="container">
-    <div id="app"></div>
-  </main>
+        <section class="module-grid">
+            <a href="pages/quran.html" class="module-card">
+                <h3>আল-কুরআন</h3>
+                <p>আরবি পাঠ, অর্থ, সংক্ষিপ্ত তাফসির ও আয়াতভিত্তিক অনুসন্ধান।</p>
+            </a>
+            <a href="pages/hadith.html" class="module-card">
+                <h3>হাদিস সংকলন</h3>
+                <p>সহীহ বুখারী, সহীহ মুসলিম ও রিয়াদুস সালেহীন।</p>
+            </a>
+            <a href="pages/pillars.html" class="module-card">
+                <h3>ইসলামের ভিত্তি</h3>
+                <p>ঈমান, সালাত, সাওম, হজ, যাকাত ও তাওহীদ।</p>
+            </a>
+            <a href="pages/ramadan.html" class="module-card">
+                <h3>রমজান ও সিয়াম</h3>
+                <p>রমজানের ফজিলত, মাসায়েল ও আত্মশুদ্ধি।</p>
+            </a>
+        </section>
+    </main>
 
-  <footer>
-    <p>© 2026 Hidayah — Authentic Islamic Knowledge</p>
-  </footer>
+    <footer class="site-footer">
+        <div class="container footer-content">
+            <p>&copy; 2026 Hidayah. সম্পূর্ণ বিনামূল্যে, বিজ্ঞাপনমুক্ত ও অলাভজনক উদ্দেশ্যে পরিচালিত।</p>
+            <p class="disclaimer">সকল তথ্য কুরআন ও সহীহ সুন্নাহ ভিত্তিক।</p>
+        </div>
+    </footer>
 
-  <script src="assets/js/app.js"></script>
-  <script src="assets/js/router.js"></script>
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/app.js"></script>
 </body>
 </html>
