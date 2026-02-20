@@ -19,6 +19,7 @@ function renderHome() {
 }
 
 async function renderQuran() {
+async function renderQuran() {
   const response = await fetch("data/quran/surah-list.json");
   const data = await response.json();
 
@@ -29,7 +30,7 @@ async function renderQuran() {
 
   data.surahs.forEach(surah => {
     content += `
-      <div class="card" onclick="loadSurah(${surah.number})">
+      <div class="card" onclick="loadSurah('${surah.file}')">
         <h3>${surah.number}. ${surah.name}</h3>
         <p>${surah.arabic_name}</p>
         <small>আয়াত সংখ্যা: ${surah.ayah_count}</small>
