@@ -100,31 +100,35 @@ async function renderIman() {
   app.innerHTML = content;
 }
 
-async function loadSurah(number) {
-  const fileName = number.toString().padStart(3, "0") + "-al-fatiha.json";
-  const response = await fetch(`data/quran/${fileName}`);
-  const data = await response.json();
+async function loadSurah(fileName) {
+  try {
+    const response = await fetch(`data/quran/${fileName}`);
+    const data = await response.json();
 
-  let content = `
-    <h2>${data.name} (${data.arabic_name})</h2>
-  `;
-
-  data.verses.forEach(verse => {
-    content += `
-      <div class="card">
-        <p class="arabic">${verse.arabic}</p>
-        <p class="transliteration">${verse.transliteration}</p>
-        <p class="translation">${verse.bangla}</p>
-        <div class="tafsir">
-          <strong>সংক্ষিপ্ত ব্যাখ্যা:</strong>
-          <p>${verse.tafsir}</p>
-        </div>
-        <small>আয়াত: ${verse.ayah}</small>
-      </div>
+    let content = `
+      <h2>${data.name} (${data.arabic_name})</h2>
     `;
-  });
 
-  content += `<br><button onclick="location.hash='#quran'">← সূরা তালিকায় ফিরে যান</button>`;
+    data.verses.forEach(verse => {
+      content += `
+        <div class="card">
+          <p class="arabic">${verse.arabic}</p>
+          <p class="transliteration">${verse.transliteration}</p>
+          <p class="translation">${verse.bangla}</p>
+          <div class="tafsir">
+            <strong>সংক্ষিপ্ত ব্যাখ্যা:</strong>
+            <p>${verse.tafsir}</p>
+          </div>
+          <small>আয়াত: ${verse.ayah}</small>
+        </div>
+      `;
+    });
 
-  app.innerHTML = content;
+    content += `<br><button onclick="location.hash='#quran'">← সূরা তালিকায় ফিরে যান</button>`;
+    app.innerHTML = content;
+
+  } catch (error) {
+    app.innerHTML = `<p>এই সূরাটি এখনো যুক্ত হয়নি।</p>
+    <button onclick="location.hash='#quran'">← ফিরে যান</button>`;
+  }
 }
