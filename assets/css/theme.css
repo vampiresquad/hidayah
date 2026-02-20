@@ -1,55 +1,32 @@
+/* assets/css/theme.css */
 :root {
-  --primary: #0E7C3A;
-  --accent: #C8A951;
-  --bg: #FFFFFF;
-  --text: #222222;
+  /* Primary Palette */
+  --color-primary: #0E7C3A; /* Emerald Green */
+  --color-accent: #C8A951;  /* Soft Gold */
+  
+  /* Neutral Palette */
+  --color-bg-light: #FFFFFF;
+  --color-text-main: #222222;
+  --color-text-muted: #555555;
+  --color-border: #EEEEEE;
+
+  /* Typography */
+  --font-bangla: 'YourBengaliFont', sans-serif;
+  --font-arabic: 'YourArabicFont', serif;
+  
+  /* Spacing & Layout */
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 32px;
+  --border-radius: 8px;
 }
 
-body {
-  background: var(--bg);
-  color: var(--text);
-}
-
-.navbar {
-  background: var(--primary);
-  color: white;
-  padding: 15px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.navbar nav a {
-  margin-left: 15px;
-  font-weight: 500;
-}
-
-.hero {
-  text-align: center;
-  padding: 60px 20px;
-}
-
-.hero h1 {
-  color: var(--primary);
-  margin-bottom: 10px;
-}
-
-.modules {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
-  padding: 40px 20px;
-}
-
-.card {
-  background: #f7f7f7;
-  padding: 25px;
-  border-radius: 8px;
-  transition: 0.3s ease;
-}
-
-.card:hover {
-  background: var(--accent);
-  color: white;
-  cursor: pointer;
+/* Optional Dark Mode Foundation */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg-light: #121212;
+    --color-text-main: #E0E0E0;
+    --color-text-muted: #AAAAAA;
+    --color-border: #333333;
+  }
 }
