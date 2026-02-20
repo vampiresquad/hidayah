@@ -114,24 +114,35 @@ let content = `
 `;
 
     data.verses.forEach(verse => {
-      content += `
-        <div class="card">
-          <p class="arabic">${verse.arabic}</p>
-          <p class="transliteration">${verse.transliteration}</p>
-          <p class="translation">${verse.bangla}</p>
-          <div class="tafsir">
-            <strong>সংক্ষিপ্ত ব্যাখ্যা:</strong>
-            <p>${verse.tafsir}</p>
-          </div>
-          <small>আয়াত: ${verse.ayah}</small>
-        </div>
-      `;
-    });
+  const ayahText = `${data.name} ${verse.ayah}\n\n${verse.arabic}\n${verse.transliteration}\n${verse.bangla}`;
 
+  content += `
+    <div class="card">
+      <div class="ayah-header">
+        <span class="ayah-badge">আয়াত ${verse.ayah}</span>
+        <button class="copy-btn" onclick="copyAyah(\`${ayahText}\`)">Copy</button>
+      </div>
+
+      <p class="arabic">${verse.arabic}</p>
+      <p class="transliteration">${verse.transliteration}</p>
+      <p class="translation">${verse.bangla}</p>
+
+      <div class="tafsir">
+        <strong>সংক্ষিপ্ত ব্যাখ্যা:</strong>
+        <p>${verse.tafsir}</p>
+      </div>
+    </div>
+  `;
+});
 content += `<br><button class="button" onclick="location.hash='#quran'">← সূরা তালিকায় ফিরে যান</button>`;
 
   } catch (error) {
     app.innerHTML = `<p>এই সূরাটি এখনো যুক্ত হয়নি।</p>
     <button onclick="location.hash='#quran'">← ফিরে যান</button>`;
   }
+}
+function copyAyah(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    alert("আয়াত কপি হয়েছে");
+  });
 }
