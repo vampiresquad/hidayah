@@ -18,42 +18,11 @@ function renderHome() {
   `;
 }
 
-async function renderQuran() {
-async function renderQuran() {
-  const response = await fetch("data/quran/surah-list.json");
-  const data = await response.json();
-
-  let content = `
-    <h2>আল-কুরআন</h2>
-    <div class="modules">
-  `;
-
-  data.surahs.forEach(surah => {
-    content += `
-      <div class="card" onclick="loadSurah('${surah.file}')">
-        <h3>${surah.number}. ${surah.name}</h3>
-        <p>${surah.arabic_name}</p>
-        <small>আয়াত সংখ্যা: ${surah.ayah_count}</small>
-      </div>
-    `;
-  });
-
-  content += `</div>`;
-  app.innerHTML = content;
-}
-
-function renderHadith() {
-  app.innerHTML = `<h2>সহিহ হাদিস বিভাগ</h2><p>হাদিস ডেটাবেস প্রস্তুত হচ্ছে।</p>`;
-}
-
 async function renderPillars() {
   const response = await fetch("data/pillars.json");
   const data = await response.json();
 
-  let content = `
-    <h2>${data.title}</h2>
-    <div class="modules">
-  `;
+  let content = `<h2>${data.title}</h2><div class="modules">`;
 
   data.pillars.forEach(pillar => {
     content += `
@@ -66,26 +35,14 @@ async function renderPillars() {
   });
 
   content += `</div>`;
-
   app.innerHTML = content;
-}
-
-function renderRamadan() {
-  app.innerHTML = `<h2>রমজান বিভাগ</h2><p>রমজান গাইড প্রস্তুত হচ্ছে।</p>`;
-}
-
-function renderDua() {
-  app.innerHTML = `<h2>দৈনিক দোয়া</h2><p>দোয়া তালিকা যুক্ত হবে।</p>`;
 }
 
 async function renderIman() {
   const response = await fetch("data/iman.json");
   const data = await response.json();
 
-  let content = `
-    <h2>${data.title}</h2>
-    <div class="modules">
-  `;
+  let content = `<h2>${data.title}</h2><div class="modules">`;
 
   data.articles.forEach(item => {
     content += `
@@ -101,48 +58,83 @@ async function renderIman() {
   app.innerHTML = content;
 }
 
+async function renderQuran() {
+  const response = await fetch("data/quran/surah-list.json");
+  const data = await response.json();
+
+  let content = `<h2>আল-কুরআন</h2><div class="modules">`;
+
+  data.surahs.forEach(surah => {
+    content += `
+      <div class="card" onclick="loadSurah('${surah.file}')">
+        <h3>${surah.number}. ${surah.name}</h3>
+        <p>${surah.arabic_name}</p>
+        <small>আয়াত সংখ্যা: ${surah.ayah_count}</small>
+      </div>
+    `;
+  });
+
+  content += `</div>`;
+  app.innerHTML = content;
+}
+
 async function loadSurah(fileName) {
   try {
     const response = await fetch(`data/quran/${fileName}`);
     const data = await response.json();
 
-let content = `
-  <div style="text-align:center; margin-bottom:30px;">
-    <h2>${data.name}</h2>
-    <h3 style="font-family:'Amiri'; direction:rtl;">${data.arabic_name}</h3>
-  </div>
-`;
+    let content = `
+      <div style="text-align:center; margin-bottom:30px;">
+        <h2>${data.name}</h2>
+        <h3 class="arabic">${data.arabic_name}</h3>
+      </div>
+    `;
 
     data.verses.forEach(verse => {
-  const ayahText = `${data.name} ${verse.ayah}\n\n${verse.arabic}\n${verse.transliteration}\n${verse.bangla}`;
+      const ayahText = `${data.name} ${verse.ayah}\n\n${verse.arabic}\n${verse.transliteration}\n${verse.bangla}`;
 
-  content += `
-    <div class="card">
-      <div class="ayah-header">
-        <span class="ayah-badge">আয়াত ${verse.ayah}</span>
-        <button class="copy-btn" onclick="copyAyah(\`${ayahText}\`)">Copy</button>
-      </div>
+      content += `
+        <div class="card">
+          <div class="ayah-header">
+            <span class="ayah-badge">আয়াত ${verse.ayah}</span>
+            <button class="copy-btn" onclick="copyAyah(\`${ayahText}\`)">Copy</button>
+          </div>
 
-      <p class="arabic">${verse.arabic}</p>
-      <p class="transliteration">${verse.transliteration}</p>
-      <p class="translation">${verse.bangla}</p>
+          <p class="arabic">${verse.arabic}</p>
+          <p class="transliteration">${verse.transliteration}</p>
+          <p class="translation">${verse.bangla}</p>
 
-      <div class="tafsir">
-        <strong>সংক্ষিপ্ত ব্যাখ্যা:</strong>
-        <p>${verse.tafsir}</p>
-      </div>
-    </div>
-  `;
-});
-content += `<br><button class="button" onclick="location.hash='#quran'">← সূরা তালিকায় ফিরে যান</button>`;
+          <div class="tafsir">
+            <strong>সংক্ষিপ্ত ব্যাখ্যা:</strong>
+            <p>${verse.tafsir}</p>
+          </div>
+        </div>
+      `;
+    });
+
+    content += `<button class="button" onclick="location.hash='#quran'">← সূরা তালিকায় ফিরে যান</button>`;
+    app.innerHTML = content;
 
   } catch (error) {
     app.innerHTML = `<p>এই সূরাটি এখনো যুক্ত হয়নি।</p>
-    <button onclick="location.hash='#quran'">← ফিরে যান</button>`;
+    <button class="button" onclick="location.hash='#quran'">← ফিরে যান</button>`;
   }
 }
+
 function copyAyah(text) {
   navigator.clipboard.writeText(text).then(() => {
     alert("আয়াত কপি হয়েছে");
   });
+}
+
+function renderHadith() {
+  app.innerHTML = `<h2>সহিহ হাদিস বিভাগ</h2>`;
+}
+
+function renderRamadan() {
+  app.innerHTML = `<h2>রমজান বিভাগ</h2>`;
+}
+
+function renderDua() {
+  app.innerHTML = `<h2>দৈনিক দোয়া</h2>`;
 }
