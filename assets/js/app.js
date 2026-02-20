@@ -1,15 +1,20 @@
 // assets/js/app.js
 
 document.addEventListener('DOMContentLoaded', () => {
-    // বর্তমানে কোন পেজে আছি তা নির্ধারণ করা
+    // ১. প্রথমেই Header এবং Footer লোড করা
+    loadCommonComponents();
+
+    // ২. বর্তমানে কোন পেজে আছি তা নির্ধারণ করা
     const currentPage = window.location.pathname.split('/').pop() || 'index.html';
 
-    // রাউটিং লজিক: পেজ অনুযায়ী ডেটা লোড করা
+    // ৩. রাউটিং লজিক: পেজ অনুযায়ী ডেটা লোড করা
     if (currentPage === 'pillars.html') {
         loadPillarsData();
     }
-    // ভবিষ্যতে quran.html বা hadith.html এর জন্য এখানে লজিক যুক্ত হবে
 });
+
+// ... (নিচের loadPillarsData ফাংশনটি আগের মতোই থাকবে)
+
 
 /**
  * 'ইসলামের ভিত্তি' পেজের জন্য ডেটা লোড ও রেন্ডার করা
