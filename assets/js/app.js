@@ -12,6 +12,7 @@ function renderHome() {
       <div class="card" onclick="location.hash='#hadith'">সহিহ হাদিস</div>
       <div class="card" onclick="location.hash='#pillars'">ইসলামের মূল ভিত্তি</div>
       <div class="card" onclick="location.hash='#iman'">ঈমানের ৬টি মূলনীতি</div>
+      <div class="card" onclick="location.hash='#bookmarks'">সংরক্ষিত আয়াত</div>
       <div class="card" onclick="location.hash='#ramadan'">রমজান বিভাগ</div>
       <div class="card" onclick="location.hash='#dua'">দৈনিক দোয়া</div>
     </section>
@@ -91,14 +92,23 @@ async function loadSurah(fileName) {
     `;
 
     data.verses.forEach(verse => {
-      const ayahText = `${data.name} ${verse.ayah}\n\n${verse.arabic}\n${verse.transliteration}\n${verse.bangla}`;
+const ayahObject = {
+  surah: data.name,
+  ayah: verse.ayah,
+  arabic: verse.arabic,
+  transliteration: verse.transliteration,
+  bangla: verse.bangla
+};
 
-      content += `
-        <div class="card">
-          <div class="ayah-header">
-            <span class="ayah-badge">আয়াত ${verse.ayah}</span>
-            <button class="copy-btn" onclick="copyAyah(\`${ayahText}\`)">Copy</button>
-          </div>
+content += `
+  <div class="card">
+    <div class="ayah-header">
+      <span class="ayah-badge">আয়াত ${verse.ayah}</span>
+      <div>
+        <button class="copy-btn" onclick="copyAyah(\`${ayahText}\`)">Copy</button>
+        <button class="copy-btn" onclick='saveBookmark(${JSON.stringify(ayahObject)})'>Save</button>
+      </div>
+    </div>
 
           <p class="arabic">${verse.arabic}</p>
           <p class="transliteration">${verse.transliteration}</p>
@@ -137,4 +147,46 @@ function renderRamadan() {
 
 function renderDua() {
   app.innerHTML = `<h2>দৈনিক দোয়া</h2>`;
+}
+
+function saveBookmark(ayah) {
+  let bookmarks = JSON.parse(localStorage.getItem("hidayahBookmarks")) || [];
+
+  const exists = bookmarks.some(
+    item => item.surah === ayah.surah && item.ayah === ayah.ayah
+  );
+
+  if (!exists) {
+    bookmarks.push(ayah);
+    localStorage.setItem("hidayahBookmarks", JSON.stringify(bookmarks));
+    alert("আয়াত সংরক্ষণ করা হয়েছে");
+  } else {
+    alert("এই আয়াত ইতিমধ্যে সংরক্ষিত");
+  }
+}
+function renderBookmarks() {
+  let bookmarks = JSON.parse(localStorage.getItem("hidayahBookmarks")) || [];
+
+  if (bookmarks.length === 0) {
+    app.innerHTML = `
+      <h2>সংরক্ষিত আয়াত</h2>
+      <p>এখনো কোনো আয়াত সংরক্ষণ করা হয়নি।</p>
+    `;
+    return;
+  }
+
+  let content = `<h2>সংরক্ষিত আয়াত</h2>`;
+
+  bookmarks.forEach(item => {
+    content += `
+      <div class="card">
+        <span class="ayah-badge">${item.surah} — আয়াত ${item.ayah}</span>
+        <p class="arabic">${item.arabic}</p>
+        <p class="transliteration">${item.transliteration}</p>
+        <p class="translation">${item.bangla}</p>
+      </div>
+    `;
+  });
+
+  app.innerHTML = content;
 }
