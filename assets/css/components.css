@@ -9,3 +9,27 @@
   font-size: 13px;
   color: gray;
 }
+.arabic {
+  font-size: 26px;
+  direction: rtl;
+  text-align: right;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.transliteration {
+  font-style: italic;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.translation {
+  margin-bottom: 10px;
+}
+
+.tafsir {
+  background: #f3f7f4;
+  padding: 10px;
+  border-left: 4px solid var(--primary);
+  margin-bottom: 10px;
+}
