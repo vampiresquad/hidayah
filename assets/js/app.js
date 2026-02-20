@@ -1,192 +1,62 @@
-const app = document.getElementById("app");
+// assets/js/app.js
 
-function renderHome() {
-  app.innerHTML = `
-    <section class="hero">
-      <h1>স্বাগতম Hidayah-এ</h1>
-      <p>বাংলা ভাষায় প্রামাণ্য ইসলামিক জ্ঞানভান্ডার</p>
-    </section>
+document.addEventListener('DOMContentLoaded', () => {
+    // বর্তমানে কোন পেজে আছি তা নির্ধারণ করা
+    const currentPage = window.location.pathname.split('/').pop() || 'index.html';
 
-    <section class="modules">
-      <div class="card" onclick="location.hash='#quran'">আল-কুরআন</div>
-      <div class="card" onclick="location.hash='#hadith'">সহিহ হাদিস</div>
-      <div class="card" onclick="location.hash='#pillars'">ইসলামের মূল ভিত্তি</div>
-      <div class="card" onclick="location.hash='#iman'">ঈমানের ৬টি মূলনীতি</div>
-      <div class="card" onclick="location.hash='#bookmarks'">সংরক্ষিত আয়াত</div>
-      <div class="card" onclick="location.hash='#ramadan'">রমজান বিভাগ</div>
-      <div class="card" onclick="location.hash='#dua'">দৈনিক দোয়া</div>
-    </section>
-  `;
-}
+    // রাউটিং লজিক: পেজ অনুযায়ী ডেটা লোড করা
+    if (currentPage === 'pillars.html') {
+        loadPillarsData();
+    }
+    // ভবিষ্যতে quran.html বা hadith.html এর জন্য এখানে লজিক যুক্ত হবে
+});
 
-async function renderPillars() {
-  const response = await fetch("data/pillars.json");
-  const data = await response.json();
+/**
+ * 'ইসলামের ভিত্তি' পেজের জন্য ডেটা লোড ও রেন্ডার করা
+ */
+async function loadPillarsData() {
+    const contentContainer = document.getElementById('content-container');
+    
+    // লোডিং স্টেটমেন্ট দেখানো
+    if (contentContainer) {
+        contentContainer.innerHTML = '<p class="loading">ডেটা লোড হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...</p>';
+    }
 
-  let content = `<h2>${data.title}</h2><div class="modules">`;
+    // JSON থেকে ডেটা আনা (লোকাল ফাইল পাথ)
+    const data = await fetchJSONData('../data/pillars.json');
 
-  data.pillars.forEach(pillar => {
-    content += `
-      <div class="card">
-        <h3>${pillar.name}</h3>
-        <p>${pillar.description}</p>
-        <small>রেফারেন্স: ${pillar.reference}</small>
-      </div>
-    `;
-  });
+    if (data && contentContainer) {
+        let htmlContent = `
+            <header class="page-header">
+                <h2>${data.module_name}</h2>
+                <p>সর্বশেষ আপডেট: ${data.metadata.last_updated}</p>
+            </header>
+        `;
 
-  content += `</div>`;
-  app.innerHTML = content;
-}
+        // টপিক এবং সেকশনগুলো লুপ করে HTML তৈরি করা
+        data.topics.forEach(topic => {
+            htmlContent += `<section class="topic-section">
+                <h3 class="topic-title">${topic.title}</h3>`;
+            
+            topic.sections.forEach(section => {
+                htmlContent += `
+                    <div class="sub-section">
+                        <h4 class="section-subtitle">${section.subtitle}</h4>
+                        <p class="intro-text">${section.intro_text}</p>
+                        
+                        <div class="evidences-container">
+                            ${section.evidences.map(evidence => createEvidenceCard(evidence)).join('')}
+                        </div>
+                    </div>
+                `;
+            });
 
-async function renderIman() {
-  const response = await fetch("data/iman.json");
-  const data = await response.json();
+            htmlContent += `</section>`;
+        });
 
-  let content = `<h2>${data.title}</h2><div class="modules">`;
-
-  data.articles.forEach(item => {
-    content += `
-      <div class="card">
-        <h3>${item.name}</h3>
-        <p>${item.description}</p>
-        <small>রেফারেন্স: ${item.reference}</small>
-      </div>
-    `;
-  });
-
-  content += `</div>`;
-  app.innerHTML = content;
-}
-
-async function renderQuran() {
-  const response = await fetch("data/quran/surah-list.json");
-  const data = await response.json();
-
-  let content = `<h2>আল-কুরআন</h2><div class="modules">`;
-
-  data.surahs.forEach(surah => {
-    content += `
-      <div class="card" onclick="loadSurah('${surah.file}')">
-        <h3>${surah.number}. ${surah.name}</h3>
-        <p>${surah.arabic_name}</p>
-        <small>আয়াত সংখ্যা: ${surah.ayah_count}</small>
-      </div>
-    `;
-  });
-
-  content += `</div>`;
-  app.innerHTML = content;
-}
-
-async function loadSurah(fileName) {
-  try {
-    const response = await fetch(`data/quran/${fileName}`);
-    const data = await response.json();
-
-    let content = `
-      <div style="text-align:center; margin-bottom:30px;">
-        <h2>${data.name}</h2>
-        <h3 class="arabic">${data.arabic_name}</h3>
-      </div>
-    `;
-
-    data.verses.forEach(verse => {
-const ayahObject = {
-  surah: data.name,
-  ayah: verse.ayah,
-  arabic: verse.arabic,
-  transliteration: verse.transliteration,
-  bangla: verse.bangla
-};
-
-content += `
-  <div class="card">
-    <div class="ayah-header">
-      <span class="ayah-badge">আয়াত ${verse.ayah}</span>
-      <div>
-        <button class="copy-btn" onclick="copyAyah(\`${ayahText}\`)">Copy</button>
-        <button class="copy-btn" onclick='saveBookmark(${JSON.stringify(ayahObject)})'>Save</button>
-      </div>
-    </div>
-
-          <p class="arabic">${verse.arabic}</p>
-          <p class="transliteration">${verse.transliteration}</p>
-          <p class="translation">${verse.bangla}</p>
-
-          <div class="tafsir">
-            <strong>সংক্ষিপ্ত ব্যাখ্যা:</strong>
-            <p>${verse.tafsir}</p>
-          </div>
-        </div>
-      `;
-    });
-
-    content += `<button class="button" onclick="location.hash='#quran'">← সূরা তালিকায় ফিরে যান</button>`;
-    app.innerHTML = content;
-
-  } catch (error) {
-    app.innerHTML = `<p>এই সূরাটি এখনো যুক্ত হয়নি।</p>
-    <button class="button" onclick="location.hash='#quran'">← ফিরে যান</button>`;
-  }
-}
-
-function copyAyah(text) {
-  navigator.clipboard.writeText(text).then(() => {
-    alert("আয়াত কপি হয়েছে");
-  });
-}
-
-function renderHadith() {
-  app.innerHTML = `<h2>সহিহ হাদিস বিভাগ</h2>`;
-}
-
-function renderRamadan() {
-  app.innerHTML = `<h2>রমজান বিভাগ</h2>`;
-}
-
-function renderDua() {
-  app.innerHTML = `<h2>দৈনিক দোয়া</h2>`;
-}
-
-function saveBookmark(ayah) {
-  let bookmarks = JSON.parse(localStorage.getItem("hidayahBookmarks")) || [];
-
-  const exists = bookmarks.some(
-    item => item.surah === ayah.surah && item.ayah === ayah.ayah
-  );
-
-  if (!exists) {
-    bookmarks.push(ayah);
-    localStorage.setItem("hidayahBookmarks", JSON.stringify(bookmarks));
-    alert("আয়াত সংরক্ষণ করা হয়েছে");
-  } else {
-    alert("এই আয়াত ইতিমধ্যে সংরক্ষিত");
-  }
-}
-function renderBookmarks() {
-  let bookmarks = JSON.parse(localStorage.getItem("hidayahBookmarks")) || [];
-
-  if (bookmarks.length === 0) {
-    app.innerHTML = `
-      <h2>সংরক্ষিত আয়াত</h2>
-      <p>এখনো কোনো আয়াত সংরক্ষণ করা হয়নি।</p>
-    `;
-    return;
-  }
-
-  let content = `<h2>সংরক্ষিত আয়াত</h2>`;
-
-  bookmarks.forEach(item => {
-    content += `
-      <div class="card">
-        <span class="ayah-badge">${item.surah} — আয়াত ${item.ayah}</span>
-        <p class="arabic">${item.arabic}</p>
-        <p class="transliteration">${item.transliteration}</p>
-        <p class="translation">${item.bangla}</p>
-      </div>
-    `;
-  });
-
-  app.innerHTML = content;
+        // কন্টেইনারে জেনারেট করা HTML বসিয়ে দেওয়া
+        contentContainer.innerHTML = htmlContent;
+    } else if (contentContainer) {
+        contentContainer.innerHTML = '<p class="error">ডেটা লোড করতে ব্যর্থ হয়েছে।</p>';
+    }
 }
