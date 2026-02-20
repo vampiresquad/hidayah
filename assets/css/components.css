@@ -1,1 +1,11 @@
+.card h3 {
+  margin-bottom: 10px;
+  color: var(--primary);
+}
 
+.card small {
+  display: block;
+  margin-top: 10px;
+  font-size: 13px;
+  color: gray;
+}
