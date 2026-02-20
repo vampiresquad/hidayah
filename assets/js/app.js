@@ -1,26 +1,38 @@
-const routes = {
-  "": "Home",
-  "#home": "Home",
-  "#quran": "Quran",
-  "#hadith": "Hadith",
-  "#pillars": "Pillars",
-  "#ramadan": "Ramadan",
-  "#dua": "Dua"
-};
+const app = document.getElementById("app");
 
-function loadContent(hash) {
-  const section = document.querySelector('.container');
-  const routeName = routes[hash] || "Home";
+function renderHome() {
+  app.innerHTML = `
+    <section class="hero">
+      <h1>স্বাগতম Hidayah-এ</h1>
+      <p>বাংলা ভাষায় প্রামাণ্য ইসলামিক জ্ঞানভান্ডার</p>
+    </section>
 
-  section.innerHTML = `<h2>${routeName} বিভাগ আসছে…</h2><p>তথ্য পেয়ে গেলে এখানে বিষয়টি ডাইনামিকভাবে রেন্ডার হবে।</p>`;
+    <section class="modules">
+      <div class="card" onclick="location.hash='#quran'">আল-কুরআন</div>
+      <div class="card" onclick="location.hash='#hadith'">সহিহ হাদিস</div>
+      <div class="card" onclick="location.hash='#pillars'">ইসলামের মূল ভিত্তি</div>
+      <div class="card" onclick="location.hash='#ramadan'">রমজান বিভাগ</div>
+      <div class="card" onclick="location.hash='#dua'">দৈনিক দোয়া</div>
+    </section>
+  `;
 }
 
-// Router listener
-window.addEventListener("hashchange", () => {
-  loadContent(location.hash);
-});
+function renderQuran() {
+  app.innerHTML = `<h2>আল-কুরআন বিভাগ</h2><p>শীঘ্রই সম্পূর্ণ সূরা তালিকা যুক্ত হবে।</p>`;
+}
 
-// Initial load
-window.addEventListener("DOMContentLoaded", () => {
-  loadContent(location.hash);
-});
+function renderHadith() {
+  app.innerHTML = `<h2>সহিহ হাদিস বিভাগ</h2><p>হাদিস ডেটাবেস প্রস্তুত হচ্ছে।</p>`;
+}
+
+function renderPillars() {
+  app.innerHTML = `<h2>ইসলামের মূল ভিত্তি</h2><p>৫টি স্তম্ভ ও ৬টি ঈমান বিস্তারিত আসছে।</p>`;
+}
+
+function renderRamadan() {
+  app.innerHTML = `<h2>রমজান বিভাগ</h2><p>রমজান গাইড প্রস্তুত হচ্ছে।</p>`;
+}
+
+function renderDua() {
+  app.innerHTML = `<h2>দৈনিক দোয়া</h2><p>দোয়া তালিকা যুক্ত হবে।</p>`;
+}
