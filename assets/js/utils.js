@@ -54,3 +54,64 @@ function createEvidenceCard(evidence) {
         </div>
     `;
 }
+// assets/js/utils.js (আগের কোডের নিচে এই অংশটুকু যোগ করুন)
+
+/**
+ * সব পেজের জন্য সাধারণ Header এবং Footer লোড করার ফাংশন
+ */
+function loadCommonComponents() {
+    // আমরা কোন ফোল্ডারে আছি তার ওপর ভিত্তি করে পাথ ঠিক করা
+    const basePath = window.location.pathname.includes('/pages/') ? '../' : './';
+    
+    const headerHTML = `
+        <header class="site-header">
+            <div class="container header-content">
+                <a href="${basePath}index.html" class="logo"><h2>Hidayah</h2></a>
+                <nav class="main-nav">
+                    <ul>
+                        <li><a href="${basePath}index.html">মূল পাতা</a></li>
+                        <li><a href="${basePath}pages/quran.html">কুরআন</a></li>
+                        <li><a href="${basePath}pages/hadith.html">হাদিস</a></li>
+                        <li><a href="${basePath}pages/pillars.html">ইসলামের ভিত্তি</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+    `;
+
+    const footerHTML = `
+        <footer class="site-footer">
+            <div class="container footer-content">
+                <p>&copy; 2026 Hidayah. সম্পূর্ণ বিনামূল্যে, বিজ্ঞাপনমুক্ত ও অলাভজনক উদ্দেশ্যে পরিচালিত।</p>
+                <p class="disclaimer">সকল তথ্য কুরআন ও সহীহ সুন্নাহ ভিত্তিক।</p>
+            </div>
+        </footer>
+    `;
+
+    // HTML-এর প্লেসহোল্ডারগুলোতে কন্টেন্ট বসানো
+    const headerElement = document.getElementById('header-placeholder');
+    const footerElement = document.getElementById('footer-placeholder');
+
+    if (headerElement) headerElement.innerHTML = headerHTML;
+    if (footerElement) footerElement.innerHTML = footerHTML;
+
+    // বর্তমানে কোন পেজে আছি, মেনুতে সেই লিংকটি অ্যাকটিভ (Active) করা
+    highlightActiveLink();
+}
+
+/**
+ * মেনুর অ্যাকটিভ লিংক হাইলাইট করার ফাংশন
+ */
+function highlightActiveLink() {
+    const links = document.querySelectorAll('.main-nav a');
+    const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+    
+    links.forEach(link => {
+        // লিংকের href-এর সাথে বর্তমান পেজের নাম মিলে গেলে active ক্লাস যুক্ত হবে
+        if (link.getAttribute('href').includes(currentPath)) {
+            link.classList.add('active');
+        } else {
+            link.classList.remove('active');
+        }
+    });
+}
