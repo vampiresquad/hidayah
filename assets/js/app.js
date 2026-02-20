@@ -112,8 +112,13 @@ async function loadSurah(number) {
   data.verses.forEach(verse => {
     content += `
       <div class="card">
-        <p style="font-size:22px; direction:rtl;">${verse.arabic}</p>
-        <p>${verse.bangla}</p>
+        <p class="arabic">${verse.arabic}</p>
+        <p class="transliteration">${verse.transliteration}</p>
+        <p class="translation">${verse.bangla}</p>
+        <div class="tafsir">
+          <strong>সংক্ষিপ্ত ব্যাখ্যা:</strong>
+          <p>${verse.tafsir}</p>
+        </div>
         <small>আয়াত: ${verse.ayah}</small>
       </div>
     `;
