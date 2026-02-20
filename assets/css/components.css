@@ -74,3 +74,6 @@
 .button:hover {
   background: var(--accent);
 }
+.copy-btn:last-child {
+  background: var(--primary);
+}
