@@ -4,32 +4,39 @@
   --color-primary: #0E7C3A; /* Emerald Green */
   --color-accent: #C8A951;  /* Soft Gold */
   
-  /* Neutral Palette */
-  --color-bg-light: #FFFFFF;
+  /* Neutral Palette (Light Mode Default) */
+  --color-bg-light: #F7F9F8; /* অ্যাপের ব্যাকগ্রাউন্ড হালকা অফ-হোয়াইট, যাতে সারফেসগুলো ফুটে ওঠে */
+  --color-bg-surface: #FFFFFF; /* কার্ড, হেডার এবং ন্যাভিগেশনের ব্যাকগ্রাউন্ড */
   --color-text-main: #222222;
   --color-text-muted: #555555;
   --color-border: #EEEEEE;
 
-  /* Typography */
-  --font-bangla: 'YourBengaliFont', sans-serif;
-  --font-arabic: 'YourArabicFont', serif;
+  /* Shadows (আগের ফাইলগুলোতে ব্যবহৃত হয়েছিল) */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  /* Typography (স্ট্যান্ডার্ড ফলব্যাক যুক্ত করা হলো) */
+  --font-bangla: 'Hind Siliguri', 'Kalpurush', system-ui, -apple-system, sans-serif;
+  --font-arabic: 'Amiri', 'Scheherazade New', 'Lateef', serif;
   
   /* Spacing & Layout */
   --spacing-sm: 8px;
   --spacing-md: 16px;
   --spacing-lg: 32px;
-  --border-radius: 8px;
+  --border-radius: 12px; /* অ্যাপের মতো ফিল দেওয়ার জন্য একটু রাউন্ডেড করা হলো (আগে 8px ছিল) */
 }
 
-/* Optional Dark Mode Foundation */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg-light: #121212;
-    --color-text-main: #E0E0E0;
-    --color-text-muted: #AAAAAA;
-    --color-border: #333333;
-  }
+/* Dark Mode Foundation (JS-এর .dark-mode ক্লাসের সাথে সিঙ্ক করা) */
+body.dark-mode {
+  --color-bg-light: #121212;
+  --color-bg-surface: #1E1E1E;
+  --color-text-main: #E0E0E0;
+  --color-text-muted: #AAAAAA;
+  --color-border: #333333;
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
+
 /* =========================================
    Native App UI/UX Enhancements
 ========================================= */
@@ -38,21 +45,31 @@ body {
     /* ইসলামিক জিওমেট্রিক প্যাটার্ন (খুব হালকা জলছাপ) */
     background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%230e7c3a' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
     
-    /* বটম নেভিগেশন বারের জন্য নিচে ফাঁকা জায়গা রাখা */
-    padding-bottom: 80px; 
+    /* বটম নেভিগেশন বারের জন্য নিচে ফাঁকা জায়গা রাখা (Safe Area যুক্ত করে) */
+    padding-bottom: calc(80px + env(safe-area-inset-bottom)); 
     
     /* মোবাইলের নীল রঙের হাইলাইট বন্ধ করা */
     -webkit-tap-highlight-color: transparent; 
+
+    /* থিম পরিবর্তনের সময় স্মুথ ট্রানজিশন */
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 body.dark-mode {
     background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
 }
 
+/* সারফেস এলিমেন্টগুলোর জন্য (যাতে কার্ডগুলো ব্যাকগ্রাউন্ড থেকে আলাদা বোঝা যায়) */
+.surface {
+    background-color: var(--color-bg-surface);
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
 /* নেটিভ অ্যাপের মতো টাচ ফিডব্যাক (ক্লিক করলে हल्का ছোট হবে) */
 .module-card, .theme-btn, .prayer-card {
     transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease;
     user-select: none; /* কার্ডের লেখা যেন ভুল করে সিলেক্ট না হয়ে যায় */
+    -webkit-user-select: none;
 }
 
 .module-card:active, .theme-btn:active {
@@ -62,6 +79,7 @@ body.dark-mode {
 /* শুধুমাত্র পড়ার অংশগুলোতে টেক্সট কপি করার পারমিশন দেওয়া */
 .evidence-body, .arabic-text, .translation-text, .pronunciation-text {
     user-select: text;
+    -webkit-user-select: text;
 }
 
 /* বটম নেভিগেশন বারের আইটেম ডিজাইন */
@@ -81,6 +99,7 @@ body.dark-mode {
 
 .nav-item i {
     font-size: 1.2rem;
+    transition: transform 0.3s ease, color 0.3s ease;
 }
 
 .nav-item.active {
