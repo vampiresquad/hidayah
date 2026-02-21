@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>যাকাত ক্যালকুলেটর | Hidayah</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/theme.css">
+    <link rel="stylesheet" href="../assets/css/base.css">
+    <link rel="stylesheet" href="../assets/css/layout.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+    
+    <style>
+        /* Input Field Design */
+        .input-group {
+            margin-bottom: 20px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--color-text-main);
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid var(--color-border);
+            border-radius: var(--border-radius);
+            font-size: 1.1rem;
+            background-color: var(--color-bg-body);
+            color: var(--color-text-main);
+            transition: border-color 0.3s;
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(14, 124, 58, 0.1);
+        }
+        
+        /* Result Box Design */
+        #zakat-result {
+            display: none;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            margin-top: 30px;
+            text-align: center;
+        }
+        .result-amount {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--color-primary);
+            margin: 10px 0;
+            font-family: var(--font-bangla);
+        }
+    </style>
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <div class="settings-bar container" style="display: flex; justify-content: flex-end; padding: 15px 16px;">
+        <button id="theme-toggle-btn" onclick="toggleTheme()" class="theme-btn">
+            <i class="fa-solid fa-moon"></i> ডার্ক মোড
+        </button>
+    </div>
+
+    <main class="container">
+        <div class="section-header">
+            <h2><i class="fa-solid fa-scale-balanced"></i> যাকাত ক্যালকুলেটর</h2>
+            <p>সম্পদের হিসাব দিন এবং নির্ভুল যাকাত জানুন</p>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <a href="../index.html" class="theme-btn" style="text-decoration: none; display: inline-block;">
+                <i class="fa-solid fa-arrow-left"></i> ড্যাশবোর্ডে ফিরুন
+            </a>
+        </div>
+
+        <div class="surface" style="padding: 30px; border-radius: var(--border-radius); margin-bottom: 50px;">
+            <p style="color: var(--color-text-muted); margin-bottom: 25px; font-size: 0.95rem;">
+                <i class="fa-solid fa-circle-info" style="color: var(--color-accent);"></i> 
+                <strong>নিয়ম:</strong> আপনার কাছে থাকা নগদ অর্থ, সোনা-রুপা এবং ব্যবসার মালের বর্তমান বাজারমূল্য টাকায় (BDT) লিখুন। ঋণ থাকলে তা বাদ দেওয়া হবে।
+            </p>
+
+            <div class="input-group">
+                <label><i class="fa-solid fa-money-bill-wave"></i> ১. নগদ অর্থ (ব্যাংক বা হাতে)</label>
+                <input type="number" id="cash" placeholder="যেমন: 50000" min="0">
+            </div>
+
+            <div class="input-group">
+                <label><i class="fa-solid fa-coins" style="color: #FFD700;"></i> ২. স্বর্ণের বর্তমান বাজারমূল্য</label>
+                <input type="number" id="gold" placeholder="আপনার স্বর্ণের মোট মূল্য (টাকায়)" min="0">
+            </div>
+
+            <div class="input-group">
+                <label><i class="fa-solid fa-ring" style="color: #C0C0C0;"></i> ৩. রৌপ্যের বর্তমান বাজারমূল্য</label>
+                <input type="number" id="silver" placeholder="আপনার রৌপ্যের মোট মূল্য (টাকায়)" min="0">
+            </div>
+
+            <div class="input-group">
+                <label><i class="fa-solid fa-store"></i> ৪. ব্যবসায়ের মাল / ইনভেস্টমেন্ট</label>
+                <input type="number" id="business" placeholder="বিক্রয়ের উদ্দেশ্যে রাখা মালের মূল্য" min="0">
+            </div>
+
+            <div class="input-group">
+                <label style="color: #E74C3C;"><i class="fa-solid fa-hand-holding-dollar"></i> ৫. ঋণ বা দেনা (মাইনাস হবে)</label>
+                <input type="number" id="debts" placeholder="আপনার বর্তমান ঋণের পরিমাণ" min="0">
+            </div>
+
+            <div class="input-group">
+                <label><i class="fa-solid fa-scale-unbalanced"></i> আজকের নিসাব (৫২.৫ ভরি রৌপ্যের মূল্য)</label>
+                <input type="number" id="nisab" value="85000" min="0">
+                <small style="color: var(--color-text-muted);">* বর্তমানে ৫২.৫ ভরি রুপার বাজারমূল্য আনুমানিক ৮৫,০০০ টাকা। আপনি চাইলে বাজার অনুযায়ী পরিবর্তন করতে পারেন।</small>
+            </div>
+
+            <button onclick="calculateZakat()" class="theme-btn" style="width: 100%; padding: 15px; font-size: 1.2rem; background-color: var(--color-primary); color: white; border: none; margin-top: 15px;">
+                <i class="fa-solid fa-calculator"></i> যাকাত হিসাব করুন
+            </button>
+
+            <div id="zakat-result" class="surface">
+                </div>
+        </div>
+
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../assets/js/utils.js"></script>
+    <script src="../assets/js/app.js"></script>
+</body>
+</html>
