@@ -20,14 +20,55 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (currentPage === 'planner.html') {
         loadKhatamPlanner();
     } else if (currentPage === 'subjects.html') {
-        loadSubjectsData(); // নতুন মডিউল কল করা হলো
+        loadSubjectsData(); 
     }
 });
 
 
+/* =========================================
+   PWA & Service Worker Configuration (NEW)
+========================================= */
 
+// 1. Register Service Worker
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        // মনে রাখবেন, sw.js ফাইলটি আপনার প্রোজেক্টের রুট ডিরেক্টরিতে থাকতে হবে
+        navigator.serviceWorker.register('/sw.js')
+            .then((registration) => {
+                console.log('PWA ServiceWorker registration successful with scope: ', registration.scope);
+            })
+            .catch((error) => {
+                console.error('PWA ServiceWorker registration failed: ', error);
+            });
+    });
+}
 
+// 2. Offline / Online Status Handling
+window.addEventListener('online', updateOnlineStatus);
+window.addEventListener('offline', updateOnlineStatus);
 
+function updateOnlineStatus(event) {
+    if (!navigator.onLine) {
+        console.warn("ইন্টারনেট সংযোগ বিচ্ছিন্ন! কিছু ডেটা (যেমন: API) লোড নাও হতে পারে।");
+        // আপনি চাইলে এখানে একটি কাস্টম টোস্ট (Toast) বা অ্যালার্ট যুক্ত করতে পারেন
+        // উদাহরণ: showToast('আপনি এখন অফলাইনে আছেন।');
+    } else {
+        console.log("ইন্টারনেট সংযোগ ফিরে এসেছে!");
+    }
+}
+
+// 3. PWA Install Prompt Handling (Add to Home Screen)
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    // ব্রাউজারের ডিফল্ট ইনস্টল প্রম্পট বন্ধ করা হচ্ছে
+    e.preventDefault();
+    // ইভেন্টটি সেভ করে রাখা হচ্ছে যাতে পরে কাস্টম বাটনে ট্রিগার করা যায়
+    deferredPrompt = e;
+    console.log("PWA Install prompt is ready. You can trigger it via a custom button.");
+    
+    // নোট: আপনি চাইলে আপনার UI তে একটি 'Install App' বাটন দেখাতে পারেন 
+    // এবং সেটিতে ক্লিক করলে deferredPrompt.prompt() কল করতে পারেন।
+});
 
 
 /* =========================================
@@ -61,7 +102,7 @@ async function loadPillarsData() {
             htmlContent += `</section>`;
         });
         contentContainer.innerHTML = htmlContent;
-        applyFontSizes(); // ফন্ট সাইজ অ্যাপ্লাই করা
+        applyFontSizes(); 
     }
 }
 
@@ -73,7 +114,6 @@ async function loadSurahList() {
     const lastReadContainer = document.getElementById('last-read-container');
     if (!surahGrid) return;
     
-    // Last Read ব্যানার সেটআপ
     const lastReadData = JSON.parse(localStorage.getItem('hidayah_last_read'));
     if (lastReadData && lastReadContainer) {
         lastReadContainer.style.display = 'block';
@@ -124,7 +164,6 @@ async function loadSurahData(surahId, banglaName) {
     
     ayahContainer.innerHTML = '<p class="loading" style="text-align: center; font-size: 1.2rem;"><i class="fa-solid fa-spinner fa-spin"></i> কুরআনের আয়াত লোড হচ্ছে...</p>';
 
-    // Last Read সেভ করা
     localStorage.setItem('hidayah_last_read', JSON.stringify({ id: surahId, name: banglaName }));
 
     const apiUrl = `https://cdn.jsdelivr.net/npm/quran-json@3.1.2/dist/chapters/bn/${surahId}.json`;
@@ -143,7 +182,6 @@ async function loadSurahData(surahId, banglaName) {
 
         let htmlContent = '';
         
-        // বিসমিল্লাহ যোগ করা (সূরা আত-তাওবা বাদে)
         if (surahId !== 1 && surahId !== 9) {
             htmlContent += `
                 <div class="surface" style="text-align: center; padding: 20px; margin-bottom: 30px; border-radius: 50px;">
@@ -166,8 +204,6 @@ async function loadSurahData(surahId, banglaName) {
             `;
         });
         ayahContainer.innerHTML = htmlContent;
-
-        // ডেটা লোড হওয়ার পর ইউজারের সেট করা ফন্ট সাইজ অ্যাপ্লাই করা
         applyFontSizes();
 
     } else {
@@ -178,15 +214,13 @@ async function loadSurahData(surahId, banglaName) {
 function showSurahList() {
     document.getElementById('single-surah-view').style.display = 'none';
     document.getElementById('surah-list-view').style.display = 'block';
-    
-    // সূরার লিস্টে ফেরার সময় লাস্ট রিড ব্যানারটি আপডেট করার জন্য লিস্টটি পুনরায় লোড করা
     loadSurahList(); 
     window.scrollTo(0, 0);
 }
-/* =========================================
-   Hadith Module (Cloud API + Local Backup)
-========================================= */
 
+/* =========================================
+   Hadith Module 
+========================================= */
 async function loadHadithBooks() {
     const booksGrid = document.getElementById('books-grid');
     if (!booksGrid) return;
@@ -221,7 +255,6 @@ async function loadHadithBooks() {
     }
 }
 
-// ম্যাজিক ফাংশন: প্রথমে API থেকে আনবে, ফেইল করলে Local ফাইল থেকে আনবে!
 async function loadBookFromAPI(bookId, apiBookName, nameBn, nameAr, themeColor) {
     document.getElementById('hadith-books-view').style.display = 'none';
     document.getElementById('single-book-view').style.display = 'block';
@@ -239,18 +272,14 @@ async function loadBookFromAPI(bookId, apiBookName, nameBn, nameAr, themeColor) 
 
     try {
         let hadiths = null;
-        
-        // ১. প্রথমে সরাসরি GitHub Raw থেকে ট্রাই করা (এটি CDN এর চেয়ে ফাস্ট এবং রিলায়েবল)
         const apiUrl = `https://raw.githubusercontent.com/md-rifatkhan/hadithbangla/main/${apiBookName}/hadith/1.json`;
         hadiths = await fetchJSONData(apiUrl);
 
-        // ২. যদি কোনো কারণে API ফেইল করে, তবে লোকাল JSON ফাইলটি ব্যবহার করবে (Smart Fallback)
         if (!hadiths || hadiths.length === 0) {
             console.warn("API Down! Loading from local backup...");
             const localData = await fetchJSONData(`../data/hadith/${bookId}.json`);
             
             if(localData && localData.chapters && localData.chapters[0].hadiths) {
-                // লোকাল ডেটাকে API এর ফরম্যাটে সাজিয়ে নেওয়া
                 hadiths = localData.chapters[0].hadiths.map(h => ({
                     hadith_id: h.hadith_id,
                     grade: h.grade,
@@ -298,11 +327,9 @@ function showBooksList() {
     window.scrollTo(0, 0);
 }
 
-
 /* =========================================
-   Prayer Times Module (Aladhan API)
+   Prayer Times Module
 ========================================= */
-
 async function loadPrayerTimes() {
     const container = document.getElementById('prayer-times-container');
     const gregorianDateEl = document.getElementById('gregorian-date');
@@ -310,11 +337,9 @@ async function loadPrayerTimes() {
     
     if (!container) return;
 
-    // আপাতত ডিফল্ট লোকেশন ঢাকা, বাংলাদেশ রাখা হয়েছে
     const city = "Dhaka";
     const country = "Bangladesh";
     
-    // Aladhan API কল (University of Islamic Sciences, Karachi মেথড = 1)
     const apiUrl = `https://api.aladhan.com/v1/timingsByCity?city=${city}&country=${country}&method=1`;
 
     const data = await fetchJSONData(apiUrl);
@@ -323,11 +348,9 @@ async function loadPrayerTimes() {
         const timings = data.data.timings;
         const date = data.data.date;
 
-        // তারিখ সেট করা
         gregorianDateEl.innerHTML = `<i class="fa-regular fa-calendar"></i> ${date.readable}`;
         hijriDateEl.innerHTML = `<i class="fa-solid fa-moon"></i> ${date.hijri.day} ${date.hijri.month.ar} ${date.hijri.year} হিজরি`;
 
-        // 24-hour time কে 12-hour AM/PM এ কনভার্ট করার ফাংশন
         const formatTime = (time) => {
             let [hours, minutes] = time.split(':');
             let ampm = hours >= 12 ? 'PM' : 'AM';
@@ -335,7 +358,6 @@ async function loadPrayerTimes() {
             return `${hours}:${minutes} ${ampm}`;
         };
 
-        // ওয়াক্তের তালিকা এবং আইকন
         const prayers = [
             { id: "Fajr", name: "ফজর", icon: "fa-cloud-sun", time: timings.Fajr },
             { id: "Sunrise", name: "সূর্যোদয়", icon: "fa-sun", time: timings.Sunrise, isNafl: true },
@@ -348,7 +370,6 @@ async function loadPrayerTimes() {
         let htmlContent = '';
 
         prayers.forEach(prayer => {
-            // সূর্যোদয়ের কার্ডের ডিজাইন একটু আলাদা হবে
             const cardStyle = prayer.isNafl ? 'background: var(--color-bg-body); border-left-color: var(--color-border); opacity: 0.8;' : 'background: var(--color-bg-surface);';
             const iconColor = prayer.isNafl ? 'color: var(--color-text-muted);' : '';
 
@@ -371,11 +392,11 @@ async function loadPrayerTimes() {
         container.innerHTML = `<p class="error surface" style="text-align: center; color: red;"><i class="fa-solid fa-triangle-exclamation"></i> সময়সূচি লোড করতে সমস্যা হয়েছে। ইন্টারনেট চেক করুন।</p>`;
     }
 }
+
 /* =========================================
    Zakat Calculator Module
 ========================================= */
 function calculateZakat() {
-    // ইনপুট থেকে ভ্যালু নেওয়া (খালি থাকলে 0 ধরা হবে)
     const getVal = (id) => parseFloat(document.getElementById(id).value) || 0;
 
     const cash = getVal('cash');
@@ -385,20 +406,17 @@ function calculateZakat() {
     const debts = getVal('debts');
     const nisab = getVal('nisab');
 
-    // মোট সম্পদ এবং নিট সম্পদ হিসাব করা
     const totalAssets = cash + gold + silver + business;
     const netWealth = totalAssets - debts;
 
     const resultBox = document.getElementById('zakat-result');
     resultBox.style.display = 'block';
 
-    // বাংলা ফরম্যাটে টাকা দেখানোর ফাংশন (যেমন: ১,০০,০০০)
     const formatBDT = (amount) => {
         return amount.toLocaleString('en-IN') + ' ৳';
     };
 
     if (netWealth >= nisab) {
-        // যাকাত ফরজ হয়েছে (২.৫%)
         const zakatAmount = netWealth * 0.025;
         
         resultBox.style.borderTop = '5px solid var(--color-primary)';
@@ -413,7 +431,6 @@ function calculateZakat() {
             </button>
         `;
     } else if (netWealth > 0 && netWealth < nisab) {
-        // নিসাবের চেয়ে কম সম্পদ
         resultBox.style.borderTop = '5px solid var(--color-accent)';
         resultBox.style.backgroundColor = 'rgba(200, 169, 81, 0.05)';
         resultBox.innerHTML = `
@@ -421,7 +438,6 @@ function calculateZakat() {
             <p style="color: var(--color-text-muted); margin-top: 10px;">আপনার নিট সম্পদ (${formatBDT(netWealth)}) যাকাতের নিসাব (${formatBDT(nisab)}) এর চেয়ে কম।</p>
         `;
     } else {
-        // সম্পদ শূন্য বা ঋণের পরিমাণ বেশি
         resultBox.style.borderTop = '5px solid #E74C3C';
         resultBox.style.backgroundColor = 'rgba(231, 76, 60, 0.05)';
         resultBox.innerHTML = `
@@ -430,6 +446,7 @@ function calculateZakat() {
         `;
     }
 }
+
 /* =========================================
    Hisnul Muslim Module
 ========================================= */
@@ -441,7 +458,6 @@ async function loadHisnulMuslimData() {
 
     categoriesGrid.innerHTML = '<p class="loading" style="grid-column: 1 / -1; text-align: center;"><i class="fa-solid fa-spinner fa-spin"></i> দোয়ার তালিকা লোড হচ্ছে...</p>';
     
-    // JSON ডেটা ফেচ করা
     hisnulDataCache = await fetchJSONData('../data/hisnul-muslim.json');
     
     if (hisnulDataCache && hisnulDataCache.categories) {
@@ -502,7 +518,7 @@ function showDuaCategory(categoryIndex) {
     });
 
     duasContainer.innerHTML = htmlContent;
-    applyFontSizes(); // ইউজারের ফন্ট সেটিং অ্যাপ্লাই করা
+    applyFontSizes(); 
 }
 
 function showHisnulCategories() {
@@ -510,15 +526,14 @@ function showHisnulCategories() {
     document.getElementById('hisnul-categories-view').style.display = 'block';
     window.scrollTo(0, 0);
 }
+
 /* =========================================
    Khatam Planner & Tracker Module
 ========================================= */
-
 async function loadKhatamPlanner() {
     const container = document.getElementById('planner-grid');
     if (!container) return;
 
-    // ১১৪টি সূরার নাম আনার জন্য আমাদের আগের তৈরি করা json টি ব্যবহার করছি
     const surahList = await fetchJSONData('../data/quran/surah-list.json');
     let savedProgress = JSON.parse(localStorage.getItem('hidayah_khatam_progress')) || {};
 
@@ -530,7 +545,6 @@ async function loadKhatamPlanner() {
             const isCompleted = savedProgress[surah.id] ? true : false;
             if (isCompleted) completedCount++;
             
-            // ডিজাইনের লজিক (কমপ্লিট হলে সবুজ হবে, নাহলে ডিফল্ট)
             const bgClass = isCompleted ? 'var(--color-primary)' : 'var(--color-bg-surface)';
             const iconClass = isCompleted ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle';
             const textClass = isCompleted ? 'white' : 'var(--color-text-main)';
@@ -553,10 +567,9 @@ async function loadKhatamPlanner() {
     }
 }
 
-// চেক/আনচেক করার ফাংশন (লাইভ আপডেট)
 function toggleSurahProgress(surahId) {
     let savedProgress = JSON.parse(localStorage.getItem('hidayah_khatam_progress')) || {};
-    const isCompleted = !savedProgress[surahId]; // বর্তমান অবস্থার উল্টো করা
+    const isCompleted = !savedProgress[surahId]; 
     
     if (isCompleted) {
         savedProgress[surahId] = true;
@@ -565,7 +578,6 @@ function toggleSurahProgress(surahId) {
     }
     localStorage.setItem('hidayah_khatam_progress', JSON.stringify(savedProgress));
     
-    // UI লাইভ আপডেট করা (পেজ রিলোড ছাড়া)
     const card = document.getElementById(`surah-card-${surahId}`);
     const icon = document.getElementById(`icon-${surahId}`);
     const title = document.getElementById(`title-${surahId}`);
@@ -584,26 +596,24 @@ function toggleSurahProgress(surahId) {
         title.style.color = 'var(--color-text-main)';
     }
     
-    // প্রোগ্রেস বার আপডেট করা
     const total = 114;
     const completedCount = Object.keys(savedProgress).length;
     updateProgressUI(completedCount, total);
 }
 
-// প্রোগ্রেস বারের টেক্সট এবং পার্সেন্টেজ আপডেট
 function updateProgressUI(completed, total) {
     const percentage = ((completed / total) * 100).toFixed(1);
     document.getElementById('progress-text').innerText = `${percentage}% সম্পন্ন (${total} এর মধ্যে ${completed} টি সূরা)`;
     document.getElementById('progress-bar-fill').style.width = `${percentage}%`;
 }
 
-// প্রোগ্রেস রিসেট করা
 function resetPlanner() {
     if(confirm('আপনি কি সত্যিই আপনার খতমের সকল প্রোগ্রেস মুছে ফেলতে চান? এটি আর ফেরত পাওয়া যাবে না।')) {
         localStorage.removeItem('hidayah_khatam_progress');
-        loadKhatamPlanner(); // পেজ রিরেন্ডার করা
+        loadKhatamPlanner(); 
     }
 }
+
 /* =========================================
    Subject-wise Index Module
 ========================================= */
@@ -655,13 +665,12 @@ function showSubjectDetails(subjectIndex) {
     `;
 
     let htmlContent = '';
-    // আমাদের utils.js এর createEvidenceCard ফাংশনটি ব্যবহার করে কার্ড বানাচ্ছি
     subject.evidences.forEach(evidence => {
         htmlContent += createEvidenceCard(evidence);
     });
 
     evidencesContainer.innerHTML = htmlContent;
-    applyFontSizes(); // ইউজারের ফন্ট সেটিং অ্যাপ্লাই করা
+    applyFontSizes(); 
 }
 
 function showSubjectsList() {
