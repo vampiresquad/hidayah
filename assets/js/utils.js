@@ -5,11 +5,13 @@
 ========================================= */
 let arabicFontSize = 28; 
 let translationFontSize = 18; 
+let deferredPrompt; // PWA Install prompt এর জন্য
 
 function initSettings() {
     // থিম রিস্টোর
     const savedTheme = localStorage.getItem('hidayah_theme');
-    if (savedTheme === 'dark') {
+    // ইউজারের সিস্টেম প্রেফারেন্স চেক করা (যদি আগে থেকে সেভ করা না থাকে)
+    if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         document.body.classList.add('dark-mode');
     }
     
@@ -20,6 +22,7 @@ function initSettings() {
     if (savedTrans) translationFontSize = parseInt(savedTrans);
 
     updateThemeButtonText();
+    registerServiceWorker(); // PWA এর জন্য Service Worker কল করা হলো
 }
 
 function toggleTheme() {
@@ -34,6 +37,7 @@ function updateThemeButtonText() {
     const themeBtns = document.querySelectorAll('#theme-toggle-btn');
     themeBtns.forEach(btn => {
         btn.innerHTML = isDark ? '<i class="fa-solid fa-sun"></i> লাইট মোড' : '<i class="fa-solid fa-moon"></i> ডার্ক মোড';
+        btn.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
     });
 }
 
@@ -63,6 +67,32 @@ function applyFontSizes() {
 initSettings();
 
 /* =========================================
+   PWA & Service Worker Setup
+========================================= */
+
+function registerServiceWorker() {
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            const basePath = window.location.pathname.includes('/pages/') ? '../' : './';
+            navigator.serviceWorker.register(`${basePath}sw.js`)
+                .then(registration => {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                })
+                .catch(err => {
+                    console.error('ServiceWorker registration failed: ', err);
+                });
+        });
+    }
+}
+
+// PWA ইন্সটল প্রম্পট ক্যাপচার করা
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    // আপনি চাইলে এখানে একটি কাস্টম "Install App" বাটন শো করাতে পারেন
+});
+
+/* =========================================
    Utility Functions: Fetch & Common UI
 ========================================= */
 
@@ -86,31 +116,31 @@ function loadCommonComponents() {
     
     // টপ অ্যাপ বার (গ্লাসমরফিজম ইফেক্টসহ)
     const headerHTML = `
-        <header style="position: sticky; top: 0; z-index: 1000; background: var(--color-bg-surface); opacity: 0.95; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--color-border); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-sm);">
-            <a href="${basePath}index.html" style="text-decoration: none; display: flex; align-items: center; gap: 10px; color: var(--color-primary); font-size: 1.4rem; font-weight: bold;">
+        <header style="position: sticky; top: 0; z-index: 1000; background: var(--color-bg-surface); opacity: 0.95; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--color-border); padding: max(15px, env(safe-area-inset-top)) 20px 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-sm);">
+            <a href="${basePath}index.html" aria-label="Home" style="text-decoration: none; display: flex; align-items: center; gap: 10px; color: var(--color-primary); font-size: 1.4rem; font-weight: bold;">
                 <i class="fa-solid fa-leaf"></i> Hidayah
             </a>
             <button id="theme-toggle-btn" onclick="toggleTheme()" style="background: var(--color-bg-body); border: 1px solid var(--color-border); padding: 8px 12px; border-radius: 20px; color: var(--color-text-main); cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 600; box-shadow: var(--shadow-sm);">
-                </button>
+            </button>
         </header>
     `;
 
-    // বটম নেভিগেশন বার (মোবাইল অ্যাপের মতো নিচে ফিক্সড থাকবে)
+    // বটম নেভিগেশন বার (iOS safe-area-inset-bottom যুক্ত করা হয়েছে)
     const footerHTML = `
-        <nav style="position: fixed; bottom: 0; width: 100%; z-index: 1000; background: var(--color-bg-surface); opacity: 0.95; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-top: 1px solid var(--color-border); display: flex; justify-content: space-around; align-items: center; padding: 10px 5px 20px 5px; box-shadow: 0 -4px 15px rgba(0,0,0,0.05);">
-            <a href="${basePath}index.html" class="nav-item">
+        <nav style="position: fixed; bottom: 0; width: 100%; z-index: 1000; background: var(--color-bg-surface); opacity: 0.95; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-top: 1px solid var(--color-border); display: flex; justify-content: space-around; align-items: center; padding: 10px 5px calc(15px + env(safe-area-inset-bottom)) 5px; box-shadow: 0 -4px 15px rgba(0,0,0,0.05);">
+            <a href="${basePath}index.html" class="nav-item" aria-label="Home">
                 <i class="fa-solid fa-house"></i>
                 <span>হোম</span>
             </a>
-            <a href="${basePath}pages/quran.html" class="nav-item">
+            <a href="${basePath}pages/quran.html" class="nav-item" aria-label="Quran">
                 <i class="fa-solid fa-book-open-reader"></i>
                 <span>কুরআন</span>
             </a>
-            <a href="${basePath}pages/hadith.html" class="nav-item">
+            <a href="${basePath}pages/hadith.html" class="nav-item" aria-label="Hadith">
                 <i class="fa-solid fa-book"></i>
                 <span>হাদিস</span>
             </a>
-            <a href="${basePath}pages/prayer-times.html" class="nav-item">
+            <a href="${basePath}pages/prayer-times.html" class="nav-item" aria-label="Prayer Times">
                 <i class="fa-solid fa-clock"></i>
                 <span>ওয়াক্ত</span>
             </a>
@@ -130,10 +160,16 @@ function loadCommonComponents() {
 
 function highlightActiveLink() {
     const links = document.querySelectorAll('.nav-item');
-    const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+    let currentPath = window.location.pathname.split('/').pop();
+    
+    // যদি রুট ডিরেক্টরিতে থাকে (যেমন শুধু ডোমেইন নাম)
+    if (currentPath === '' || currentPath === '/') {
+        currentPath = 'index.html';
+    }
     
     links.forEach(link => {
-        if (link.getAttribute('href').includes(currentPath)) {
+        const linkHref = link.getAttribute('href').split('/').pop();
+        if (linkHref === currentPath) {
             link.classList.add('active');
         } else {
             link.classList.remove('active');
@@ -141,23 +177,22 @@ function highlightActiveLink() {
     });
 }
 
-
 function createEvidenceCard(evidence) {
     const badgeClass = evidence.type === 'quran' ? 'badge-quran' : 'badge-hadith';
     const badgeText = evidence.type === 'quran' ? 'আল-কুরআন' : 'হাদিস';
 
     return `
-        <div class="evidence-card surface" style="margin-bottom: 15px;">
+        <div class="evidence-card surface" style="margin-bottom: 15px; border-radius: var(--border-radius, 12px); overflow: hidden;">
             <div class="evidence-header">
                 <span class="badge ${badgeClass}">${badgeText}</span>
                 <span class="reference">${evidence.reference}</span>
             </div>
             <div class="evidence-body">
-                ${evidence.arabic ? `<p class="arabic-text" dir="rtl">${evidence.arabic}</p>` : ''}
-                ${evidence.pronunciation ? `<p class="pronunciation-text"><strong>উচ্চারণ:</strong> ${evidence.pronunciation}</p>` : ''}
-                <p class="translation-text"><strong>অর্থ:</strong> ${evidence.translation}</p>
+                ${evidence.arabic ? `<p class="arabic-text" dir="rtl" style="font-size: ${arabicFontSize}px; line-height: 1.8;">${evidence.arabic}</p>` : ''}
+                ${evidence.pronunciation ? `<p class="pronunciation-text" style="margin-top: 10px;"><strong>উচ্চারণ:</strong> ${evidence.pronunciation}</p>` : ''}
+                <p class="translation-text" style="font-size: ${translationFontSize}px; margin-top: 10px;"><strong>অর্থ:</strong> ${evidence.translation}</p>
             </div>
-            ${evidence.explanation ? `<div class="evidence-explanation"><strong>ব্যাখ্যা:</strong> <p>${evidence.explanation}</p></div>` : ''}
+            ${evidence.explanation ? `<div class="evidence-explanation" style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed var(--color-border);"><strong>ব্যাখ্যা:</strong> <p>${evidence.explanation}</p></div>` : ''}
         </div>
     `;
 }
