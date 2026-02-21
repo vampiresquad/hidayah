@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>নামাজের সময়সূচি | Hidayah</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/theme.css">
+    <link rel="stylesheet" href="../assets/css/base.css">
+    <link rel="stylesheet" href="../assets/css/layout.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+    
+    <style>
+        /* নামাজের কার্ডের বিশেষ ডিজাইন */
+        .prayer-card {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            border-radius: var(--border-radius);
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-left: 5px solid var(--color-primary);
+        }
+        .prayer-card.current {
+            background-color: var(--color-primary);
+            color: white;
+            border-left: 5px solid var(--color-accent);
+            transform: scale(1.02);
+            box-shadow: 0 4px 15px rgba(14, 124, 58, 0.3);
+        }
+        .prayer-icon {
+            font-size: 1.5rem;
+            color: var(--color-accent);
+            margin-right: 15px;
+        }
+        .current .prayer-icon {
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <div class="settings-bar container" style="display: flex; justify-content: flex-end; padding: 15px 16px;">
+        <button id="theme-toggle-btn" onclick="toggleTheme()" class="theme-btn">
+            <i class="fa-solid fa-moon"></i> ডার্ক মোড
+        </button>
+    </div>
+
+    <main class="container">
+        <div class="section-header">
+            <h2><i class="fa-solid fa-clock"></i> নামাজের সময়সূচি</h2>
+            <p>প্রতিদিনের ওয়াক্ত ও হিজরি ক্যালেন্ডার</p>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <a href="../index.html" class="theme-btn" style="text-decoration: none; display: inline-block;">
+                <i class="fa-solid fa-arrow-left"></i> ড্যাশবোর্ডে ফিরুন
+            </a>
+        </div>
+
+        <div class="surface" style="padding: 30px 20px; text-align: center; border-radius: var(--border-radius); margin-bottom: 30px; background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary)); color: white;">
+            <h2 id="location-text" style="margin-bottom: 10px; font-size: 1.8rem;"><i class="fa-solid fa-location-dot"></i> ঢাকা, বাংলাদেশ</h2>
+            <p id="gregorian-date" style="font-size: 1.1rem; margin-bottom: 5px; opacity: 0.9;"></p>
+            <p id="hijri-date" style="font-size: 1.3rem; font-family: var(--font-arabic); color: var(--color-accent); font-weight: bold;"></p>
+        </div>
+
+        <div id="prayer-times-container">
+            <p class="loading" style="text-align: center; font-size: 1.2rem;"><i class="fa-solid fa-spinner fa-spin"></i> আজকের সময়সূচি লোড হচ্ছে...</p>
+        </div>
+
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../assets/js/utils.js"></script>
+    <script src="../assets/js/app.js"></script>
+</body>
+</html>
