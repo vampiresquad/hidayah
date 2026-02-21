@@ -30,3 +30,65 @@
     --color-border: #333333;
   }
 }
+/* =========================================
+   Native App UI/UX Enhancements
+========================================= */
+
+body {
+    /* ইসলামিক জিওমেট্রিক প্যাটার্ন (খুব হালকা জলছাপ) */
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%230e7c3a' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    
+    /* বটম নেভিগেশন বারের জন্য নিচে ফাঁকা জায়গা রাখা */
+    padding-bottom: 80px; 
+    
+    /* মোবাইলের নীল রঙের হাইলাইট বন্ধ করা */
+    -webkit-tap-highlight-color: transparent; 
+}
+
+body.dark-mode {
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* নেটিভ অ্যাপের মতো টাচ ফিডব্যাক (ক্লিক করলে हल्का ছোট হবে) */
+.module-card, .theme-btn, .prayer-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.3s ease;
+    user-select: none; /* কার্ডের লেখা যেন ভুল করে সিলেক্ট না হয়ে যায় */
+}
+
+.module-card:active, .theme-btn:active {
+    transform: scale(0.96) !important;
+}
+
+/* শুধুমাত্র পড়ার অংশগুলোতে টেক্সট কপি করার পারমিশন দেওয়া */
+.evidence-body, .arabic-text, .translation-text, .pronunciation-text {
+    user-select: text;
+}
+
+/* বটম নেভিগেশন বারের আইটেম ডিজাইন */
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+    gap: 5px;
+    padding: 8px 15px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.nav-item i {
+    font-size: 1.2rem;
+}
+
+.nav-item.active {
+    color: var(--color-primary);
+    font-weight: bold;
+}
+
+.nav-item.active i {
+    transform: translateY(-2px);
+    color: var(--color-accent);
+}
