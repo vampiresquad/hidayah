@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>হিসনুল মুসলিম | Hidayah</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/theme.css">
+    <link rel="stylesheet" href="../assets/css/base.css">
+    <link rel="stylesheet" href="../assets/css/layout.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <div class="settings-bar container" style="display: flex; justify-content: flex-end; padding: 15px 16px;">
+        <button id="theme-toggle-btn" onclick="toggleTheme()" class="theme-btn">
+            <i class="fa-solid fa-moon"></i> ডার্ক মোড
+        </button>
+    </div>
+
+    <main class="container">
+        
+        <div id="hisnul-categories-view">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-hands-praying"></i> হিসনুল মুসলিম</h2>
+                <p>দৈনন্দিন জীবনের মাসনুন দোয়া ও যিকির</p>
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <a href="../index.html" class="theme-btn" style="text-decoration: none; display: inline-block;">
+                    <i class="fa-solid fa-arrow-left"></i> ড্যাশবোর্ডে ফিরুন
+                </a>
+            </div>
+
+            <div id="categories-grid" class="module-grid" style="margin-bottom: 50px;"></div>
+        </div>
+
+        <div id="single-category-view" style="display: none;">
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 15px;">
+                <button onclick="showHisnulCategories()" class="theme-btn">
+                    <i class="fa-solid fa-arrow-left"></i> ক্যাটাগরিতে ফিরুন
+                </button>
+
+                <div class="reading-settings surface" style="padding: 10px 15px; border-radius: 30px; display: flex; align-items: center; gap: 15px;">
+                    <span style="font-weight: 600; color: var(--color-primary); font-size: 0.9rem;">
+                        <i class="fa-solid fa-text-height"></i> ফন্ট:
+                    </span>
+                    <div style="display: flex; gap: 5px;">
+                        <button onclick="changeFontSize('arabic', 2)" class="theme-btn" style="padding: 4px 10px; font-size: 0.8rem;">আরবি <i class="fa-solid fa-plus"></i></button>
+                        <button onclick="changeFontSize('arabic', -2)" class="theme-btn" style="padding: 4px 10px; font-size: 0.8rem;">আরবি <i class="fa-solid fa-minus"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="category-header" class="page-header surface" style="padding: 20px; margin-bottom: 20px; text-align: center;"></div>
+            <div id="duas-container" class="evidences-container" style="margin-bottom: 50px;"></div>
+        </div>
+
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../assets/js/utils.js"></script>
+    <script src="../assets/js/app.js"></script>
+</body>
+</html>
