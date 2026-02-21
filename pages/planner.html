@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>খতম প্ল্যানার | Hidayah</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/theme.css">
+    <link rel="stylesheet" href="../assets/css/base.css">
+    <link rel="stylesheet" href="../assets/css/layout.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+    
+    <style>
+        /* Progress Bar Design */
+        .progress-container {
+            background-color: var(--color-bg-body);
+            border-radius: 20px;
+            height: 25px;
+            width: 100%;
+            overflow: hidden;
+            margin-top: 15px;
+            border: 1px solid var(--color-border);
+        }
+        .progress-bar-fill {
+            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+            height: 100%;
+            width: 0%; /* JS will update this */
+            transition: width 0.5s ease-in-out;
+        }
+        
+        /* Grid for Surah Checklist */
+        .tracker-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <div class="settings-bar container" style="display: flex; justify-content: flex-end; padding: 15px 16px;">
+        <button id="theme-toggle-btn" onclick="toggleTheme()" class="theme-btn">
+            <i class="fa-solid fa-moon"></i> ডার্ক মোড
+        </button>
+    </div>
+
+    <main class="container">
+        <div class="section-header">
+            <h2><i class="fa-solid fa-chart-line"></i> কুরআন খতম ট্র্যাকার</h2>
+            <p>আপনার প্রতিদিনের তিলাওয়াতের প্রোগ্রেস সেভ রাখুন</p>
+        </div>
+
+        <div style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <a href="../index.html" class="theme-btn" style="text-decoration: none; display: inline-block;">
+                <i class="fa-solid fa-arrow-left"></i> ড্যাশবোর্ডে ফিরুন
+            </a>
+            <button onclick="resetPlanner()" class="theme-btn" style="background-color: #E74C3C; color: white; border-color: #E74C3C;">
+                <i class="fa-solid fa-trash-can"></i> প্রোগ্রেস রিসেট করুন
+            </button>
+        </div>
+
+        <div class="surface" style="padding: 30px; border-radius: var(--border-radius); text-align: center; margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+            <h3 style="color: var(--color-primary); font-size: 1.5rem; margin-bottom: 5px;">আপনার বর্তমান প্রোগ্রেস</h3>
+            <p id="progress-text" style="font-size: 1.1rem; font-weight: bold; color: var(--color-text-muted);">0.0% সম্পন্ন (১১৪ এর মধ্যে ০ টি সূরা)</p>
+            
+            <div class="progress-container">
+                <div id="progress-bar-fill" class="progress-bar-fill"></div>
+            </div>
+            <p style="margin-top: 15px; font-size: 0.9rem; color: var(--color-text-muted);">
+                <i class="fa-solid fa-lightbulb" style="color: var(--color-accent);"></i> 
+                যে সূরাগুলো পড়া শেষ হয়েছে, নিচের তালিকা থেকে সেগুলোতে ক্লিক করুন।
+            </p>
+        </div>
+
+        <div id="planner-grid" class="tracker-grid" style="margin-bottom: 50px;">
+            <p class="loading" style="grid-column: 1 / -1; text-align: center;"><i class="fa-solid fa-spinner fa-spin"></i> ডেটা লোড হচ্ছে...</p>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../assets/js/utils.js"></script>
+    <script src="../assets/js/app.js"></script>
+</body>
+</html>
