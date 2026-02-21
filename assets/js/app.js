@@ -1,6 +1,5 @@
 // assets/js/app.js
 
-// ফাইলের উপরের অংশে এইটুকু পরিবর্তন করুন:
 document.addEventListener('DOMContentLoaded', () => {
     loadCommonComponents();
 
@@ -11,9 +10,12 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (currentPage === 'quran.html') {
         loadSurahList(); 
     } else if (currentPage === 'hadith.html') {
-        loadHadithBooks(); // নতুন লজিক কল করা হলো
+        loadHadithBooks();
+    } else if (currentPage === 'prayer-times.html') {
+        loadPrayerTimes(); // নতুন মডিউল কল করা হলো
     }
 });
+
 
 
 /* =========================================
@@ -274,4 +276,76 @@ function showBooksList() {
     document.getElementById('single-book-view').style.display = 'none';
     document.getElementById('hadith-books-view').style.display = 'block';
     window.scrollTo(0, 0);
+}
+/* =========================================
+   Prayer Times Module (Aladhan API)
+========================================= */
+
+async function loadPrayerTimes() {
+    const container = document.getElementById('prayer-times-container');
+    const gregorianDateEl = document.getElementById('gregorian-date');
+    const hijriDateEl = document.getElementById('hijri-date');
+    
+    if (!container) return;
+
+    // আপাতত ডিফল্ট লোকেশন ঢাকা, বাংলাদেশ রাখা হয়েছে
+    const city = "Dhaka";
+    const country = "Bangladesh";
+    
+    // Aladhan API কল (University of Islamic Sciences, Karachi মেথড = 1)
+    const apiUrl = `https://api.aladhan.com/v1/timingsByCity?city=${city}&country=${country}&method=1`;
+
+    const data = await fetchJSONData(apiUrl);
+
+    if (data && data.code === 200) {
+        const timings = data.data.timings;
+        const date = data.data.date;
+
+        // তারিখ সেট করা
+        gregorianDateEl.innerHTML = `<i class="fa-regular fa-calendar"></i> ${date.readable}`;
+        hijriDateEl.innerHTML = `<i class="fa-solid fa-moon"></i> ${date.hijri.day} ${date.hijri.month.ar} ${date.hijri.year} হিজরি`;
+
+        // 24-hour time কে 12-hour AM/PM এ কনভার্ট করার ফাংশন
+        const formatTime = (time) => {
+            let [hours, minutes] = time.split(':');
+            let ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12 || 12;
+            return `${hours}:${minutes} ${ampm}`;
+        };
+
+        // ওয়াক্তের তালিকা এবং আইকন
+        const prayers = [
+            { id: "Fajr", name: "ফজর", icon: "fa-cloud-sun", time: timings.Fajr },
+            { id: "Sunrise", name: "সূর্যোদয়", icon: "fa-sun", time: timings.Sunrise, isNafl: true },
+            { id: "Dhuhr", name: "যোহর", icon: "fa-sun", time: timings.Dhuhr },
+            { id: "Asr", name: "আসর", icon: "fa-cloud-sun", time: timings.Asr },
+            { id: "Maghrib", name: "মাগরিব", icon: "fa-moon", time: timings.Maghrib },
+            { id: "Isha", name: "ইশা", icon: "fa-star-and-crescent", time: timings.Isha }
+        ];
+
+        let htmlContent = '';
+
+        prayers.forEach(prayer => {
+            // সূর্যোদয়ের কার্ডের ডিজাইন একটু আলাদা হবে
+            const cardStyle = prayer.isNafl ? 'background: var(--color-bg-body); border-left-color: var(--color-border); opacity: 0.8;' : 'background: var(--color-bg-surface);';
+            const iconColor = prayer.isNafl ? 'color: var(--color-text-muted);' : '';
+
+            htmlContent += `
+                <div class="prayer-card surface" style="${cardStyle}">
+                    <div style="display: flex; align-items: center;">
+                        <i class="fa-solid ${prayer.icon} prayer-icon" style="${iconColor}"></i>
+                        <span>${prayer.name}</span>
+                    </div>
+                    <div>
+                        <span style="font-family: var(--font-bangla);">${formatTime(prayer.time)}</span>
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = htmlContent;
+
+    } else {
+        container.innerHTML = `<p class="error surface" style="text-align: center; color: red;"><i class="fa-solid fa-triangle-exclamation"></i> সময়সূচি লোড করতে সমস্যা হয়েছে। ইন্টারনেট চেক করুন।</p>`;
+    }
 }
