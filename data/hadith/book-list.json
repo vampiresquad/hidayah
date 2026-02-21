@@ -1,0 +1,26 @@
+[
+  {
+    "id": "bukhari",
+    "name_bn": "সহীহ বুখারী",
+    "name_ar": "صحيح البخاري",
+    "total_hadith": 7563,
+    "compiler": "ইমাম বুখারী (রহ.)",
+    "color": "#0E7C3A"
+  },
+  {
+    "id": "muslim",
+    "name_bn": "সহীহ মুসলিম",
+    "name_ar": "صحيح مسلم",
+    "total_hadith": 3033,
+    "compiler": "ইমাম মুসলিম (রহ.)",
+    "color": "#C8A951"
+  },
+  {
+    "id": "abu-dawud",
+    "name_bn": "সুনান আবু দাউদ",
+    "name_ar": "سنن أبي داود",
+    "total_hadith": 5274,
+    "compiler": "ইমাম আবু দাউদ (রহ.)",
+    "color": "#2C3E50"
+  }
+]
