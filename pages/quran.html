@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>আল-কুরআন | Hidayah</title>
     
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
     <link rel="stylesheet" href="../assets/css/theme.css">
     <link rel="stylesheet" href="../assets/css/base.css">
     <link rel="stylesheet" href="../assets/css/layout.css">
@@ -13,22 +15,49 @@
 <body>
     <div id="header-placeholder"></div>
 
+    <div class="settings-bar container" style="display: flex; justify-content: flex-end; padding: 15px 16px;">
+        <button id="theme-toggle-btn" onclick="toggleTheme()" class="theme-btn">
+            <i class="fa-solid fa-moon"></i> ডার্ক মোড
+        </button>
+    </div>
+
     <main class="container">
+        
         <div id="surah-list-view">
-            <div class="page-header">
-                <h2>আল-কুরআন</h2>
+            <div id="last-read-container" style="display: none; margin-bottom: 25px;"></div>
+
+            <div class="section-header">
+                <h2><i class="fa-solid fa-book-open-reader"></i> আল-কুরআন</h2>
                 <p>১১৪ টি সূরার তালিকা</p>
             </div>
-            <div id="surah-grid" class="module-grid"></div>
+            <div id="surah-grid" class="module-grid" style="margin-bottom: 50px;"></div>
         </div>
 
         <div id="single-surah-view" style="display: none;">
-            <button onclick="showSurahList()" class="back-btn">← সূচিপত্রে ফিরে যান</button>
-            <div id="surah-header" class="page-header"></div>
-            <div id="ayah-container" class="evidences-container"></div>
-        </div>
-    </main>
+            <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 15px;">
+                
+                <button onclick="showSurahList()" class="theme-btn">
+                    <i class="fa-solid fa-arrow-left"></i> সূচিপত্র
+                </button>
 
+                <div class="reading-settings surface" style="padding: 10px 15px; border-radius: 30px; display: flex; align-items: center; gap: 15px;">
+                    <span style="font-weight: 600; color: var(--color-primary); font-size: 0.9rem;">
+                        <i class="fa-solid fa-text-height"></i> ফন্ট:
+                    </span>
+                    <div style="display: flex; gap: 5px;">
+                        <button onclick="changeFontSize('arabic', 2)" class="theme-btn" style="padding: 4px 10px; font-size: 0.8rem;" title="আরবি বড় করুন">আরবি <i class="fa-solid fa-plus"></i></button>
+                        <button onclick="changeFontSize('arabic', -2)" class="theme-btn" style="padding: 4px 10px; font-size: 0.8rem;" title="আরবি ছোট করুন">আরবি <i class="fa-solid fa-minus"></i></button>
+                        <button onclick="changeFontSize('translation', 1)" class="theme-btn" style="padding: 4px 10px; font-size: 0.8rem;" title="বাংলা বড় করুন">বাংলা <i class="fa-solid fa-plus"></i></button>
+                        <button onclick="changeFontSize('translation', -1)" class="theme-btn" style="padding: 4px 10px; font-size: 0.8rem;" title="বাংলা ছোট করুন">বাংলা <i class="fa-solid fa-minus"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="surah-header" class="page-header surface" style="padding: 20px; margin-bottom: 20px;"></div>
+            <div id="ayah-container" class="evidences-container" style="margin-bottom: 50px;"></div>
+        </div>
+
+    </main>
 
     <div id="footer-placeholder"></div>
 
