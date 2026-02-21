@@ -73,13 +73,15 @@ initSettings();
 function registerServiceWorker() {
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            const basePath = window.location.pathname.includes('/pages/') ? '../' : './';
-            navigator.serviceWorker.register(`${basePath}sw.js`)
+            // Service Worker সবসময় রুট ('/') ডিরেক্টরি থেকে রেজিস্টার করতে হয়
+            const swPath = window.location.pathname.includes('/pages/') ? '../sw.js' : './sw.js';
+            
+            navigator.serviceWorker.register(swPath)
                 .then(registration => {
-                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    console.log('PWA ServiceWorker registration successful with scope: ', registration.scope);
                 })
                 .catch(err => {
-                    console.error('ServiceWorker registration failed: ', err);
+                    console.error('PWA ServiceWorker registration failed: ', err);
                 });
         });
     }
@@ -89,21 +91,25 @@ function registerServiceWorker() {
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
-    // আপনি চাইলে এখানে একটি কাস্টম "Install App" বাটন শো করাতে পারেন
+    console.log('PWA Install Prompt ready');
 });
 
 /* =========================================
    Utility Functions: Fetch & Common UI
 ========================================= */
 
+// আপডেট: API বা ইন্টারনেট না থাকলে অ্যাপ যেন ক্র্যাশ না করে, সেজন্য throw error এর বদলে null রিটার্ন করবে
 async function fetchJSONData(url) {
     try {
         const response = await fetch(url);
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        if (!response.ok) {
+            console.warn(`Failed to fetch from: ${url}`);
+            return null; // Error throw না করে null পাঠালে app.js এর Fallback লজিক কাজ করবে
+        }
         return await response.json();
     } catch (error) {
-        console.error("ডেটা লোড করতে সমস্যা হয়েছে:", error);
-        return null;
+        console.warn(`Network error or API down for: ${url}`);
+        return null; // ইন্টারনেট না থাকলেও null পাঠাবে
     }
 }
 
@@ -153,7 +159,6 @@ function loadCommonComponents() {
     if (headerElement) headerElement.innerHTML = headerHTML;
     if (footerElement) footerElement.innerHTML = footerHTML;
 
-    // টপ বারের ডার্ক মোড বাটনের টেক্সট ঠিক করা
     updateThemeButtonText();
     highlightActiveLink();
 }
@@ -162,7 +167,6 @@ function highlightActiveLink() {
     const links = document.querySelectorAll('.nav-item');
     let currentPath = window.location.pathname.split('/').pop();
     
-    // যদি রুট ডিরেক্টরিতে থাকে (যেমন শুধু ডোমেইন নাম)
     if (currentPath === '' || currentPath === '/') {
         currentPath = 'index.html';
     }
