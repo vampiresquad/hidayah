@@ -1,5 +1,6 @@
 // assets/js/app.js
 
+// ফাইলের উপরের অংশে এইটুকু পরিবর্তন করুন:
 document.addEventListener('DOMContentLoaded', () => {
     loadCommonComponents();
 
@@ -9,8 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
         loadPillarsData();
     } else if (currentPage === 'quran.html') {
         loadSurahList(); 
+    } else if (currentPage === 'hadith.html') {
+        loadHadithBooks(); // নতুন লজিক কল করা হলো
     }
 });
+
 
 /* =========================================
    Pillars Module
@@ -163,5 +167,72 @@ function showSurahList() {
     
     // সূরার লিস্টে ফেরার সময় লাস্ট রিড ব্যানারটি আপডেট করার জন্য লিস্টটি পুনরায় লোড করা
     loadSurahList(); 
+    window.scrollTo(0, 0);
+}
+/* =========================================
+   Hadith Module
+========================================= */
+async function loadHadithBooks() {
+    const booksGrid = document.getElementById('books-grid');
+    if (!booksGrid) return;
+
+    booksGrid.innerHTML = '<p class="loading" style="grid-column: 1 / -1; text-align: center;"><i class="fa-solid fa-spinner fa-spin"></i> বইয়ের তালিকা লোড হচ্ছে...</p>';
+    
+    const booksList = await fetchJSONData('../data/hadith/book-list.json');
+    
+    if (booksList && booksList.length > 0) {
+        let htmlContent = '';
+        booksList.forEach(book => {
+            htmlContent += `
+                <div class="module-card surface" style="cursor: pointer; border-bottom: 4px solid ${book.color};" onclick="loadBookData('${book.id}', '${book.name_bn}', '${book.name_ar}')">
+                    <div style="text-align: center; padding: 15px 0;">
+                        <i class="fa-solid fa-book-quran" style="font-size: 3rem; color: ${book.color}; margin-bottom: 15px;"></i>
+                        <h3 style="margin-bottom: 5px;">${book.name_bn}</h3>
+                        <p style="color: var(--color-accent); font-family: var(--font-arabic); font-size: 1.5rem; margin-bottom: 10px;">${book.name_ar}</p>
+                        <p style="font-size: 0.85rem; color: var(--color-text-muted);"><i class="fa-solid fa-pen-nib"></i> ${book.compiler}</p>
+                        <p style="font-size: 0.85rem; color: var(--color-text-muted);"><i class="fa-solid fa-list-ol"></i> মোট হাদিস: ${book.total_hadith}</p>
+                    </div>
+                </div>
+            `;
+        });
+        booksGrid.innerHTML = htmlContent;
+    } else {
+        booksGrid.innerHTML = `<p class="error surface">ডেটা লোড করতে সমস্যা হয়েছে।</p>`;
+    }
+}
+
+// নির্দিষ্ট বইয়ে ক্লিক করলে ডেমো ডেটা দেখানোর ফাংশন (আপাতত)
+function loadBookData(bookId, nameBn, nameAr) {
+    document.getElementById('hadith-books-view').style.display = 'none';
+    document.getElementById('single-book-view').style.display = 'block';
+    window.scrollTo(0, 0);
+
+    const bookHeader = document.getElementById('book-header');
+    const hadithContainer = document.getElementById('hadith-container');
+
+    bookHeader.innerHTML = `
+        <h2 style="color: var(--color-primary); font-size: 2rem; text-align: center; margin-bottom: 10px;">${nameBn} <span style="font-family: var(--font-arabic); color: var(--color-accent);">(${nameAr})</span></h2>
+    `;
+
+    // ডেমো হাদিস রেন্ডার করা (পরবর্তীতে আমরা API বা JSON থেকে আনবো)
+    hadithContainer.innerHTML = `
+        <div class="evidence-card surface" style="margin-bottom: 25px; padding: 25px;">
+            <div class="evidence-header" style="margin-bottom: 20px;">
+                <span class="badge badge-hadith" style="font-size: 1rem; padding: 5px 15px;"><i class="fa-solid fa-book-open"></i> হাদিস ১</span>
+            </div>
+            <div class="evidence-body">
+                <p class="arabic-text" dir="rtl" style="margin-bottom: 20px; line-height: 2.2;">إِنَّمَا الأَعْمَالُ بِالنِّيَّاتِ، وَإِنَّمَا لِكُلِّ امْرِئٍ مَا نَوَى</p>
+                <p class="translation-text" style="line-height: 1.8; color: var(--color-text-main);"><strong>অর্থ:</strong> নিশ্চয়ই সমস্ত কাজ নিয়তের ওপর নির্ভরশীল। আর প্রতিটি মানুষ তাই পাবে, যার নিয়ত সে করবে। (সহীহ বুখারী: ১)</p>
+            </div>
+        </div>
+        <p style="text-align: center; color: var(--color-text-muted); margin-top: 30px;">(এখানে পরবর্তীতে ডাইনামিকভাবে ক্লাউড থেকে হাজার হাজার হাদিস লোড হবে...)</p>
+    `;
+    
+    applyFontSizes(); // ফন্ট সাইজ অ্যাপ্লাই করা
+}
+
+function showBooksList() {
+    document.getElementById('single-book-view').style.display = 'none';
+    document.getElementById('hadith-books-view').style.display = 'block';
     window.scrollTo(0, 0);
 }
