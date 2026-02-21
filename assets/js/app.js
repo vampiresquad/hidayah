@@ -14,11 +14,14 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (currentPage === 'prayer-times.html') {
         loadPrayerTimes();
     } else if (currentPage === 'zakat.html') {
-        // Zakat module has no auto-load on start
+        // Zakat page logic handles itself on button click
     } else if (currentPage === 'hisnul-muslim.html') {
-        loadHisnulMuslimData(); // নতুন মডিউল কল করা হলো
+        loadHisnulMuslimData();
+    } else if (currentPage === 'planner.html') {
+        loadKhatamPlanner(); // নতুন মডিউল কল করা হলো
     }
 });
+
 
 
 
@@ -493,4 +496,98 @@ function showHisnulCategories() {
     document.getElementById('single-category-view').style.display = 'none';
     document.getElementById('hisnul-categories-view').style.display = 'block';
     window.scrollTo(0, 0);
+}
+/* =========================================
+   Khatam Planner & Tracker Module
+========================================= */
+
+async function loadKhatamPlanner() {
+    const container = document.getElementById('planner-grid');
+    if (!container) return;
+
+    // ১১৪টি সূরার নাম আনার জন্য আমাদের আগের তৈরি করা json টি ব্যবহার করছি
+    const surahList = await fetchJSONData('../data/quran/surah-list.json');
+    let savedProgress = JSON.parse(localStorage.getItem('hidayah_khatam_progress')) || {};
+
+    if (surahList && surahList.length > 0) {
+        let htmlContent = '';
+        let completedCount = 0;
+
+        surahList.forEach(surah => {
+            const isCompleted = savedProgress[surah.id] ? true : false;
+            if (isCompleted) completedCount++;
+            
+            // ডিজাইনের লজিক (কমপ্লিট হলে সবুজ হবে, নাহলে ডিফল্ট)
+            const bgClass = isCompleted ? 'var(--color-primary)' : 'var(--color-bg-surface)';
+            const iconClass = isCompleted ? 'fa-solid fa-circle-check' : 'fa-regular fa-circle';
+            const textClass = isCompleted ? 'white' : 'var(--color-text-main)';
+            const borderStyle = isCompleted ? 'none' : '1px solid var(--color-border)';
+
+            htmlContent += `
+                <div id="surah-card-${surah.id}" class="surface" style="padding: 15px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; transition: 0.3s; background-color: ${bgClass}; border: ${borderStyle}; box-shadow: var(--shadow-sm);" onclick="toggleSurahProgress(${surah.id})">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 1.4rem;"><i id="icon-${surah.id}" class="${iconClass}" style="color: ${textClass};"></i></span>
+                        <h4 id="title-${surah.id}" style="margin: 0; font-size: 1rem; color: ${textClass};">${surah.id}. ${surah.bangla_name}</h4>
+                    </div>
+                </div>
+            `;
+        });
+        
+        container.innerHTML = htmlContent;
+        updateProgressUI(completedCount, surahList.length);
+    } else {
+        container.innerHTML = `<p class="error surface" style="grid-column: 1 / -1; text-align: center;">সূরার তালিকা লোড করতে সমস্যা হয়েছে।</p>`;
+    }
+}
+
+// চেক/আনচেক করার ফাংশন (লাইভ আপডেট)
+function toggleSurahProgress(surahId) {
+    let savedProgress = JSON.parse(localStorage.getItem('hidayah_khatam_progress')) || {};
+    const isCompleted = !savedProgress[surahId]; // বর্তমান অবস্থার উল্টো করা
+    
+    if (isCompleted) {
+        savedProgress[surahId] = true;
+    } else {
+        delete savedProgress[surahId];
+    }
+    localStorage.setItem('hidayah_khatam_progress', JSON.stringify(savedProgress));
+    
+    // UI লাইভ আপডেট করা (পেজ রিলোড ছাড়া)
+    const card = document.getElementById(`surah-card-${surahId}`);
+    const icon = document.getElementById(`icon-${surahId}`);
+    const title = document.getElementById(`title-${surahId}`);
+    
+    if(isCompleted) {
+        card.style.backgroundColor = 'var(--color-primary)';
+        card.style.border = 'none';
+        icon.className = 'fa-solid fa-circle-check';
+        icon.style.color = 'white';
+        title.style.color = 'white';
+    } else {
+        card.style.backgroundColor = 'var(--color-bg-surface)';
+        card.style.border = '1px solid var(--color-border)';
+        icon.className = 'fa-regular fa-circle';
+        icon.style.color = 'var(--color-text-main)';
+        title.style.color = 'var(--color-text-main)';
+    }
+    
+    // প্রোগ্রেস বার আপডেট করা
+    const total = 114;
+    const completedCount = Object.keys(savedProgress).length;
+    updateProgressUI(completedCount, total);
+}
+
+// প্রোগ্রেস বারের টেক্সট এবং পার্সেন্টেজ আপডেট
+function updateProgressUI(completed, total) {
+    const percentage = ((completed / total) * 100).toFixed(1);
+    document.getElementById('progress-text').innerText = `${percentage}% সম্পন্ন (${total} এর মধ্যে ${completed} টি সূরা)`;
+    document.getElementById('progress-bar-fill').style.width = `${percentage}%`;
+}
+
+// প্রোগ্রেস রিসেট করা
+function resetPlanner() {
+    if(confirm('আপনি কি সত্যিই আপনার খতমের সকল প্রোগ্রেস মুছে ফেলতে চান? এটি আর ফেরত পাওয়া যাবে না।')) {
+        localStorage.removeItem('hidayah_khatam_progress');
+        loadKhatamPlanner(); // পেজ রিরেন্ডার করা
+    }
 }
