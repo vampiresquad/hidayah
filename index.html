@@ -3,38 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Hidayah - বিশুদ্ধ ইসলামিক জ্ঞানের একটি অসাম্প্রদায়িক, দলীল-ভিত্তিক ও উন্মুক্ত প্ল্যাটফর্ম।">
-    <title>Hidayah | বিশুদ্ধ ইসলামিক জ্ঞান</title>
+    <title>Hidayah | পূর্ণাঙ্গ ইসলামিক জীবনব্যবস্থা</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <link rel="stylesheet" href="assets/css/theme.css">
     <link rel="stylesheet" href="assets/css/base.css">
     <link rel="stylesheet" href="assets/css/layout.css">
+    <link rel="stylesheet" href="assets/css/components.css">
 </head>
 <body>
     <div id="header-placeholder"></div>
 
+    <div class="settings-bar container" style="display: flex; justify-content: flex-end; padding: 15px 16px;">
+        <button id="theme-toggle-btn" onclick="toggleTheme()" class="theme-btn">
+            <i class="fa-solid fa-moon"></i> ডার্ক মোড
+        </button>
+    </div>
+
     <main class="container">
-        <section class="hero">
-            <h1 class="hero-title">বিশুদ্ধ ইসলামিক জ্ঞানের নির্ভরযোগ্য প্ল্যাটফর্ম</h1>
-            <p class="hero-subtitle">কুরআন ও সহীহ হাদিসের আলোকে একটি অসাম্প্রদায়িক, দলীল-ভিত্তিক ও উন্মুক্ত জ্ঞানভাণ্ডার।</p>
+        <section class="hero surface" style="margin-bottom: 40px; padding: 50px 20px; text-align: center; border-radius: var(--border-radius);">
+            <div class="hero-icon" style="font-size: 3rem; color: var(--color-primary); margin-bottom: 15px;">
+                <i class="fa-solid fa-leaf"></i>
+            </div>
+            <h1 class="hero-title">Hidayah</h1>
+            <p class="hero-subtitle">কুরআন, সুন্নাহ ও ফিকহের এক অসাম্প্রদায়িক ও নির্ভরযোগ্য জ্ঞানকোষ।</p>
         </section>
 
-        <section class="module-grid">
-            <a href="pages/quran.html" class="module-card">
+        <div class="section-header">
+            <h2>মূল জ্ঞানভাণ্ডার</h2>
+        </div>
+        <section class="module-grid" style="margin-bottom: 50px;">
+            <a href="pages/quran.html" class="module-card surface">
+                <div class="card-icon"><i class="fa-solid fa-book-open-reader"></i></div>
                 <h3>আল-কুরআন</h3>
-                <p>আরবি পাঠ, অর্থ, সংক্ষিপ্ত তাফসির ও আয়াতভিত্তিক অনুসন্ধান।</p>
+                <p>অর্থ, তাফসির ও আয়াতভিত্তিক অনুসন্ধান।</p>
             </a>
-            <a href="pages/hadith.html" class="module-card">
+            <a href="pages/hadith.html" class="module-card surface">
+                <div class="card-icon"><i class="fa-solid fa-book"></i></div>
                 <h3>হাদিস সংকলন</h3>
-                <p>সহীহ বুখারী, সহীহ মুসলিম ও রিয়াদুস সালেহীন।</p>
+                <p>সিহাহ সিত্তাহ ও অন্যান্য নির্ভরযোগ্য গ্রন্থ।</p>
             </a>
-            <a href="pages/pillars.html" class="module-card">
+            <a href="pages/pillars.html" class="module-card surface">
+                <div class="card-icon"><i class="fa-solid fa-mosque"></i></div>
                 <h3>ইসলামের ভিত্তি</h3>
-                <p>ঈমান, সালাত, সাওম, হজ, যাকাত ও তাওহীদ।</p>
+                <p>ঈমান, সালাত, সাওম, হজ ও যাকাত।</p>
             </a>
-            <a href="pages/ramadan.html" class="module-card">
-                <h3>রমজান ও সিয়াম</h3>
-                <p>রমজানের ফজিলত, মাসায়েল ও আত্মশুদ্ধি।</p>
+            <a href="pages/subjects.html" class="module-card surface">
+                <div class="card-icon"><i class="fa-solid fa-list-ul"></i></div>
+                <h3>বিষয়ভিত্তিক ইনডেক্স</h3>
+                <p>যেকোনো বিষয়ের উপর কুরআন ও হাদিসের দলীল।</p>
+            </a>
+        </section>
+
+        <div class="section-header">
+            <h2>দৈনন্দিন জীবন</h2>
+        </div>
+        <section class="module-grid" style="margin-bottom: 50px;">
+            <a href="pages/hisnul-muslim.html" class="module-card surface">
+                <div class="card-icon"><i class="fa-solid fa-hands-praying"></i></div>
+                <h3>হিসনুল মুসলিম</h3>
+                <p>দৈনন্দিন জীবনের প্রয়োজনীয় মাসনুন দোয়া।</p>
+            </a>
+            <a href="pages/prayer-times.html" class="module-card surface">
+                <div class="card-icon"><i class="fa-solid fa-clock"></i></div>
+                <h3>নামাজের সময়সূচি</h3>
+                <p>লোকেশন অনুযায়ী ওয়াক্ত ও কিবলার দিক।</p>
+            </a>
+            <a href="pages/zakat.html" class="module-card surface">
+                <div class="card-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+                <h3>যাকাত ক্যালকুলেটর</h3>
+                <p>নির্ভুলভাবে আপনার যাকাতের হিসাব করুন।</p>
+            </a>
+            <a href="pages/planner.html" class="module-card surface">
+                <div class="card-icon"><i class="fa-solid fa-chart-line"></i></div>
+                <h3>খতম প্ল্যানার ও ট্র্যাকার</h3>
+                <p>কুরআন খতমের লক্ষ্য নির্ধারণ করুন।</p>
             </a>
         </section>
     </main>
@@ -43,5 +87,15 @@
 
     <script src="assets/js/utils.js"></script>
     <script src="assets/js/app.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const isDark = document.body.classList.contains('dark-mode');
+            const themeBtn = document.getElementById('theme-toggle-btn');
+            if(themeBtn) {
+                themeBtn.innerHTML = isDark ? '<i class="fa-solid fa-sun"></i> লাইট মোড' : '<i class="fa-solid fa-moon"></i> ডার্ক মোড';
+            }
+        });
+    </script>
 </body>
 </html>
