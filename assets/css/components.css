@@ -4,33 +4,56 @@
     border-bottom: 2px solid var(--color-primary);
     display: inline-block;
     padding-bottom: 5px;
+    position: relative; /* ভবিষ্যতের কোনো স্যুডো-এলিমেন্ট বা ব্যাজের জন্য */
 }
 
 .section-header h2 {
     color: var(--color-text-main);
     font-size: 1.5rem;
+    font-weight: 700;
 }
 
-/* Card Icons Setup */
+/* Card & Icons Setup */
 .card-icon {
     font-size: 2.5rem;
     color: var(--color-primary);
     margin-bottom: 15px;
+    /* এনিমেশন স্মুথ করার জন্য will-change যুক্ত করা হয়েছে */
+    will-change: transform, color;
     transition: transform 0.3s ease, color 0.3s ease;
 }
 
-/* Hover Effect for Premium Feel */
+/* Hover & Active Effect for Premium Feel */
 .module-card {
-    text-align: center; /* কার্ডের ভেতরের সবকিছু মাঝে রাখার জন্য */
+    text-align: center; 
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    /* টাচ ডিভাইসে দ্রুত ট্যাপ করার সময় টেক্সট সিলেক্ট হওয়া রোধ করতে */
+    -webkit-user-select: none;
+    user-select: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
 }
 
-.module-card:hover .card-icon {
-    transform: scale(1.15) translateY(-5px); /* হোভার করলে আইকন সামান্য বড় হয়ে উপরে উঠবে */
-    color: var(--color-accent); /* হোভার করলে আইকনের রঙ সোনালী (Soft Gold) হবে */
+/* শুধুমাত্র যেসব ডিভাইসে মাউস আছে (PC), সেখানেই হোভার কাজ করবে */
+@media (hover: hover) and (pointer: fine) {
+    .module-card:hover .card-icon {
+        transform: scale(1.15) translateY(-5px); 
+        color: var(--color-accent); 
+    }
+    
+    .module-card:hover {
+        box-shadow: var(--shadow-md, 0 8px 15px rgba(0,0,0,0.1));
+        transform: translateY(-2px);
+    }
+}
+
+/* মোবাইল ডিভাইসে ট্যাপ (Touch/Click) করার ইনস্ট্যান্ট ফিডব্যাক */
+.module-card:active {
+    transform: scale(0.98);
+    opacity: 0.9;
 }
 
 /* Theme Button Styling */
@@ -47,11 +70,28 @@
     box-shadow: var(--shadow-sm);
     display: flex;
     align-items: center;
-    gap: 8px; /* আইকন এবং টেক্সটের মাঝে ফাঁকা জায়গা */
+    gap: 8px; 
+    
+    /* অ্যাপের বাটনে টেক্সট সিলেকশন রোধ */
+    -webkit-user-select: none;
+    user-select: none;
+    /* iOS/Android এর মিনিমাম টাচ টার্গেট সাইজ মেইনটেইন করার জন্য */
+    min-height: 44px;
 }
 
-.theme-btn:hover {
+/* মাউস হোভার ইফেক্ট */
+@media (hover: hover) and (pointer: fine) {
+    .theme-btn:hover {
+        background-color: var(--color-primary);
+        color: #ffffff;
+        border-color: var(--color-primary);
+        box-shadow: var(--shadow-md, 0 4px 10px rgba(0,0,0,0.15));
+    }
+}
+
+/* মোবাইল ডিভাইসে ট্যাপ করার ইফেক্ট */
+.theme-btn:active {
+    transform: scale(0.95);
     background-color: var(--color-primary);
     color: #ffffff;
-    border-color: var(--color-primary);
 }
