@@ -14,13 +14,16 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (currentPage === 'prayer-times.html') {
         loadPrayerTimes();
     } else if (currentPage === 'zakat.html') {
-        // Zakat page logic handles itself on button click
+        // Zakat logic is handled on button click
     } else if (currentPage === 'hisnul-muslim.html') {
         loadHisnulMuslimData();
     } else if (currentPage === 'planner.html') {
-        loadKhatamPlanner(); // নতুন মডিউল কল করা হলো
+        loadKhatamPlanner();
+    } else if (currentPage === 'subjects.html') {
+        loadSubjectsData(); // নতুন মডিউল কল করা হলো
     }
 });
+
 
 
 
@@ -582,4 +585,69 @@ function resetPlanner() {
         localStorage.removeItem('hidayah_khatam_progress');
         loadKhatamPlanner(); // পেজ রিরেন্ডার করা
     }
+}
+/* =========================================
+   Subject-wise Index Module
+========================================= */
+let subjectsDataCache = null;
+
+async function loadSubjectsData() {
+    const subjectsGrid = document.getElementById('subjects-grid');
+    if (!subjectsGrid) return;
+
+    subjectsGrid.innerHTML = '<p class="loading" style="grid-column: 1 / -1; text-align: center;"><i class="fa-solid fa-spinner fa-spin"></i> বিষয়ের তালিকা লোড হচ্ছে...</p>';
+    
+    subjectsDataCache = await fetchJSONData('../data/subjects.json');
+    
+    if (subjectsDataCache && subjectsDataCache.subjects) {
+        let htmlContent = '';
+        subjectsDataCache.subjects.forEach((subject, index) => {
+            htmlContent += `
+                <div class="module-card surface" style="cursor: pointer; border-bottom: 4px solid ${subject.color}; transition: transform 0.2s;" onclick="showSubjectDetails(${index})" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <div style="text-align: center; padding: 20px 0;">
+                        <i class="fa-solid ${subject.icon}" style="font-size: 3rem; color: ${subject.color}; margin-bottom: 15px;"></i>
+                        <h3 style="margin-bottom: 10px; font-size: 1.4rem;">${subject.title}</h3>
+                        <p style="font-size: 0.9rem; color: var(--color-text-muted);"><i class="fa-solid fa-book-open"></i> মোট দলীল: ${subject.evidences.length}</p>
+                    </div>
+                </div>
+            `;
+        });
+        subjectsGrid.innerHTML = htmlContent;
+    } else {
+        subjectsGrid.innerHTML = `<p class="error surface" style="grid-column: 1 / -1; text-align: center; color: red;"><i class="fa-solid fa-triangle-exclamation"></i> ডেটা লোড করতে সমস্যা হয়েছে।</p>`;
+    }
+}
+
+function showSubjectDetails(subjectIndex) {
+    if (!subjectsDataCache) return;
+
+    const subject = subjectsDataCache.subjects[subjectIndex];
+    
+    document.getElementById('subjects-list-view').style.display = 'none';
+    document.getElementById('single-subject-view').style.display = 'block';
+    window.scrollTo(0, 0);
+
+    const subjectHeader = document.getElementById('subject-header');
+    const evidencesContainer = document.getElementById('evidences-container');
+
+    subjectHeader.innerHTML = `
+        <i class="fa-solid ${subject.icon}" style="font-size: 2.5rem; color: ${subject.color}; margin-bottom: 15px;"></i>
+        <h2 style="color: var(--color-primary); font-size: 2rem; margin-bottom: 5px;">${subject.title}</h2>
+        <p style="color: var(--color-text-muted);">কুরআন ও হাদিস থেকে সংগৃহীত দলীলসমূহ</p>
+    `;
+
+    let htmlContent = '';
+    // আমাদের utils.js এর createEvidenceCard ফাংশনটি ব্যবহার করে কার্ড বানাচ্ছি
+    subject.evidences.forEach(evidence => {
+        htmlContent += createEvidenceCard(evidence);
+    });
+
+    evidencesContainer.innerHTML = htmlContent;
+    applyFontSizes(); // ইউজারের ফন্ট সেটিং অ্যাপ্লাই করা
+}
+
+function showSubjectsList() {
+    document.getElementById('single-subject-view').style.display = 'none';
+    document.getElementById('subjects-list-view').style.display = 'block';
+    window.scrollTo(0, 0);
 }
