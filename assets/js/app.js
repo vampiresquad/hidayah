@@ -12,9 +12,12 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (currentPage === 'hadith.html') {
         loadHadithBooks();
     } else if (currentPage === 'prayer-times.html') {
-        loadPrayerTimes(); // নতুন মডিউল কল করা হলো
+        loadPrayerTimes();
+    } else if (currentPage === 'zakat.html') {
+        // যাকাত পেজে লোড করার সাথে সাথে কিছু করার নেই, ইউজার বাটনে ক্লিক করলে ফাংশন কল হবে
     }
 });
+
 
 
 
@@ -347,5 +350,64 @@ async function loadPrayerTimes() {
 
     } else {
         container.innerHTML = `<p class="error surface" style="text-align: center; color: red;"><i class="fa-solid fa-triangle-exclamation"></i> সময়সূচি লোড করতে সমস্যা হয়েছে। ইন্টারনেট চেক করুন।</p>`;
+    }
+}
+/* =========================================
+   Zakat Calculator Module
+========================================= */
+function calculateZakat() {
+    // ইনপুট থেকে ভ্যালু নেওয়া (খালি থাকলে 0 ধরা হবে)
+    const getVal = (id) => parseFloat(document.getElementById(id).value) || 0;
+
+    const cash = getVal('cash');
+    const gold = getVal('gold');
+    const silver = getVal('silver');
+    const business = getVal('business');
+    const debts = getVal('debts');
+    const nisab = getVal('nisab');
+
+    // মোট সম্পদ এবং নিট সম্পদ হিসাব করা
+    const totalAssets = cash + gold + silver + business;
+    const netWealth = totalAssets - debts;
+
+    const resultBox = document.getElementById('zakat-result');
+    resultBox.style.display = 'block';
+
+    // বাংলা ফরম্যাটে টাকা দেখানোর ফাংশন (যেমন: ১,০০,০০০)
+    const formatBDT = (amount) => {
+        return amount.toLocaleString('en-IN') + ' ৳';
+    };
+
+    if (netWealth >= nisab) {
+        // যাকাত ফরজ হয়েছে (২.৫%)
+        const zakatAmount = netWealth * 0.025;
+        
+        resultBox.style.borderTop = '5px solid var(--color-primary)';
+        resultBox.style.backgroundColor = 'rgba(14, 124, 58, 0.05)';
+        resultBox.innerHTML = `
+            <h3 style="color: var(--color-text-main);">আলহামদুলিল্লাহ, আপনার ওপর যাকাত ফরজ হয়েছে।</h3>
+            <p style="color: var(--color-text-muted); margin-top: 10px;">আপনার নিট সম্পদ: ${formatBDT(netWealth)}</p>
+            <div class="result-amount">${formatBDT(zakatAmount)}</div>
+            <p style="color: var(--color-text-muted); font-size: 0.9rem;">(মোট সম্পদের ২.৫%)</p>
+            <button onclick="window.print()" class="theme-btn" style="margin-top: 15px; font-size: 0.9rem;">
+                <i class="fa-solid fa-print"></i> হিসাব সেভ/প্রিন্ট করুন
+            </button>
+        `;
+    } else if (netWealth > 0 && netWealth < nisab) {
+        // নিসাবের চেয়ে কম সম্পদ
+        resultBox.style.borderTop = '5px solid var(--color-accent)';
+        resultBox.style.backgroundColor = 'rgba(200, 169, 81, 0.05)';
+        resultBox.innerHTML = `
+            <h3 style="color: var(--color-text-main);">আপনার ওপর যাকাত ফরজ হয়নি।</h3>
+            <p style="color: var(--color-text-muted); margin-top: 10px;">আপনার নিট সম্পদ (${formatBDT(netWealth)}) যাকাতের নিসাব (${formatBDT(nisab)}) এর চেয়ে কম।</p>
+        `;
+    } else {
+        // সম্পদ শূন্য বা ঋণের পরিমাণ বেশি
+        resultBox.style.borderTop = '5px solid #E74C3C';
+        resultBox.style.backgroundColor = 'rgba(231, 76, 60, 0.05)';
+        resultBox.innerHTML = `
+            <h3 style="color: var(--color-text-main);">আপনার ওপর যাকাত ফরজ হয়নি।</h3>
+            <p style="color: var(--color-text-muted); margin-top: 10px;">আপনার ঋণ বা দেনার পরিমাণ আপনার সম্পদের চেয়ে বেশি অথবা সমান।</p>
+        `;
     }
 }
