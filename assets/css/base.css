@@ -1,24 +1,62 @@
 /* assets/css/base.css */
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* অ্যাপ-লাইক ফিলের জন্য কিছু ক্রস-প্ল্যাটফর্ম অপ্টিমাইজেশন */
+html {
+    scroll-behavior: smooth;
+    /* মোবাইল ডিভাইসে ল্যান্ডস্কেপ মোডে টেক্সট সাইজ অটো পরিবর্তন রোধ করতে */
+    -webkit-text-size-adjust: 100%;
+}
+
 body {
-    font-family: var(--font-bangla);
+    /* সিস্টেম ফলব্যাক ফন্ট যুক্ত করা হয়েছে, যাতে কোনো কারণে কাস্টম ফন্ট লোড না হলে সিস্টেমের ডিফল্ট সুন্দর ফন্ট পায় */
+    font-family: var(--font-bangla), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     background-color: var(--color-bg-light);
     color: var(--color-text-main);
     line-height: 1.6;
+    
+    /* iOS-এ ট্যাপ করার সময় ডিফল্ট গ্রে হাইলাইট মুছে ফেলার জন্য (ন্যাটিভ অ্যাপ ফিল) */
+    -webkit-tap-highlight-color: transparent;
+    
+    /* উইন্ডোজ বা ম্যাকের হাই-রেজোলিউশন স্ক্রিনে টেক্সট স্মুথ ও প্রফেশনাল করার জন্য */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* রেসপন্সিভ মিডিয়া - অ্যাপে ছবি বা আইকন যেন ওভারফ্লো না হয় */
+img, picture, video, canvas, svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
 }
 
 a {
     text-decoration: none;
     color: inherit;
+    /* টাচ ডিভাইসে ক্লিকে রেসপন্স দ্রুত করার জন্য */
+    touch-action: manipulation;
+}
+
+/* অ্যাক্সেসিবিলিটি: কীবোর্ড নেভিগেশনের জন্য আউটলাইন থাকবে, কিন্তু টাচ বা মাউস ক্লিকে হাইড থাকবে */
+a:focus:not(:focus-visible),
+button:focus:not(:focus-visible) {
+    outline: none;
 }
 
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 var(--spacing-md);
+    /* যদি কোনো কারণে ভ্যারিয়েবল লোড না হয়, তার জন্য একটি ডিফল্ট ফলব্যাক ভ্যালু (15px) দেওয়া হয়েছে */
+    padding: 0 var(--spacing-md, 15px);
+    width: 100%;
+}
+
+/* ডাইনামিক্যালি (জাভাস্ক্রিপ্ট দিয়ে) কোনো এলিমেন্ট হাইড করার জন্য গ্লোবাল ক্লাস */
+[hidden] {
+    display: none !important;
 }
