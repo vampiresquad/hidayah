@@ -184,7 +184,7 @@ function showSurahList() {
     window.scrollTo(0, 0);
 }
 /* =========================================
-   Hadith Module (100% Cloud API Integrated)
+   Hadith Module (Cloud API + Local Backup)
 ========================================= */
 
 async function loadHadithBooks() {
@@ -198,14 +198,13 @@ async function loadHadithBooks() {
     if (booksList && booksList.length > 0) {
         let htmlContent = '';
         booksList.forEach(book => {
-            // API এর জন্য নির্দিষ্ট ফোল্ডারের নাম (Bukhari, Muslim, AbuDaud ইত্যাদি) সেট করা হচ্ছে
             let apiBookName = '';
             if(book.id === 'bukhari') apiBookName = 'Bukhari';
             else if(book.id === 'muslim') apiBookName = 'Muslim';
             else if(book.id === 'abu-dawud') apiBookName = 'AbuDaud';
 
             htmlContent += `
-                <div class="module-card surface" style="cursor: pointer; border-bottom: 4px solid ${book.color}; transition: transform 0.2s;" onclick="loadBookFromAPI('${apiBookName}', '${book.name_bn}', '${book.name_ar}', '${book.color}')" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                <div class="module-card surface" style="cursor: pointer; border-bottom: 4px solid ${book.color}; transition: transform 0.2s;" onclick="loadBookFromAPI('${book.id}', '${apiBookName}', '${book.name_bn}', '${book.name_ar}', '${book.color}')" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
                     <div style="text-align: center; padding: 20px 0;">
                         <i class="fa-solid fa-book-quran" style="font-size: 3rem; color: ${book.color}; margin-bottom: 15px;"></i>
                         <h3 style="margin-bottom: 5px; font-size: 1.4rem;">${book.name_bn}</h3>
@@ -222,8 +221,8 @@ async function loadHadithBooks() {
     }
 }
 
-// ম্যাজিক ফাংশন: সরাসরি গিটহাব CDN থেকে হাদিস লোড করবে!
-async function loadBookFromAPI(apiBookName, nameBn, nameAr, themeColor) {
+// ম্যাজিক ফাংশন: প্রথমে API থেকে আনবে, ফেইল করলে Local ফাইল থেকে আনবে!
+async function loadBookFromAPI(bookId, apiBookName, nameBn, nameAr, themeColor) {
     document.getElementById('hadith-books-view').style.display = 'none';
     document.getElementById('single-book-view').style.display = 'block';
     window.scrollTo(0, 0);
@@ -231,18 +230,36 @@ async function loadBookFromAPI(apiBookName, nameBn, nameAr, themeColor) {
     const bookHeader = document.getElementById('book-header');
     const hadithContainer = document.getElementById('hadith-container');
 
-    // বইয়ের হেডার রেন্ডার করা
     bookHeader.innerHTML = `
         <h2 style="color: ${themeColor}; font-size: 2rem; text-align: center; margin-bottom: 5px;">${nameBn} <span style="font-family: var(--font-arabic); color: var(--color-accent);">(${nameAr})</span></h2>
-        <p style="text-align: center; color: var(--color-text-muted); font-size: 0.9rem;">(অধ্যায় ১ এর হাদিসসমূহ সরাসরি ক্লাউড থেকে প্রদর্শিত হচ্ছে)</p>
+        <p style="text-align: center; color: var(--color-text-muted); font-size: 0.9rem;">(অধ্যায় ১ এর হাদিসসমূহ)</p>
     `;
 
-    hadithContainer.innerHTML = '<p class="loading" style="text-align: center; font-size: 1.2rem; margin-top: 30px;"><i class="fa-solid fa-spinner fa-spin"></i> ক্লাউড API থেকে হাদিস লোড হচ্ছে...</p>';
+    hadithContainer.innerHTML = '<p class="loading" style="text-align: center; font-size: 1.2rem; margin-top: 30px;"><i class="fa-solid fa-spinner fa-spin"></i> হাদিস লোড হচ্ছে...</p>';
 
     try {
-        // hadithbangla গিটহাব রিপোজিটরির লাইভ API কল (১ম অধ্যায়ের হাদিস)
-        const apiUrl = `https://cdn.jsdelivr.net/gh/md-rifatkhan/hadithbangla@main/${apiBookName}/hadith/1.json`;
-        const hadiths = await fetchJSONData(apiUrl);
+        let hadiths = null;
+        
+        // ১. প্রথমে সরাসরি GitHub Raw থেকে ট্রাই করা (এটি CDN এর চেয়ে ফাস্ট এবং রিলায়েবল)
+        const apiUrl = `https://raw.githubusercontent.com/md-rifatkhan/hadithbangla/main/${apiBookName}/hadith/1.json`;
+        hadiths = await fetchJSONData(apiUrl);
+
+        // ২. যদি কোনো কারণে API ফেইল করে, তবে লোকাল JSON ফাইলটি ব্যবহার করবে (Smart Fallback)
+        if (!hadiths || hadiths.length === 0) {
+            console.warn("API Down! Loading from local backup...");
+            const localData = await fetchJSONData(`../data/hadith/${bookId}.json`);
+            
+            if(localData && localData.chapters && localData.chapters[0].hadiths) {
+                // লোকাল ডেটাকে API এর ফরম্যাটে সাজিয়ে নেওয়া
+                hadiths = localData.chapters[0].hadiths.map(h => ({
+                    hadith_id: h.hadith_id,
+                    grade: h.grade,
+                    narrator: h.narrator,
+                    ar: h.arabic,
+                    bn: h.translation
+                }));
+            }
+        }
 
         if (hadiths && hadiths.length > 0) {
             let htmlContent = '';
@@ -251,27 +268,27 @@ async function loadBookFromAPI(apiBookName, nameBn, nameAr, themeColor) {
                 htmlContent += `
                     <div class="evidence-card surface" style="margin-bottom: 25px; padding: 25px; border-left: 4px solid ${themeColor};">
                         <div class="evidence-header" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border); padding-bottom: 15px;">
-                            <span class="badge badge-hadith" style="background: ${themeColor}; color: white; padding: 5px 15px; border-radius: 20px;"><i class="fa-solid fa-book-open"></i> হাদিস ${hadith.hadith_id}</span>
-                            <span style="background: var(--color-bg-body); padding: 5px 15px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; color: ${hadith.grade === 'সহিহ হাদিস' || hadith.grade === 'সহীহ' ? 'var(--color-primary)' : 'var(--color-accent)'};"><i class="fa-solid fa-certificate"></i> মান: ${hadith.grade}</span>
+                            <span class="badge badge-hadith" style="background: ${themeColor}; color: white; padding: 5px 15px; border-radius: 20px;"><i class="fa-solid fa-book-open"></i> হাদিস ${hadith.hadith_id || hadith.id || '১'}</span>
+                            <span style="background: var(--color-bg-body); padding: 5px 15px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; color: ${hadith.grade === 'সহিহ হাদিস' || hadith.grade === 'সহীহ' ? 'var(--color-primary)' : 'var(--color-accent)'};"><i class="fa-solid fa-certificate"></i> মান: ${hadith.grade || 'সহীহ'}</span>
                         </div>
                         
                         <div class="evidence-body">
-                            <p style="color: var(--color-text-muted); margin-bottom: 15px; font-weight: bold;"><i class="fa-solid fa-user"></i> বর্ণনাকারী: ${hadith.narrator}</p>
-                            <p class="arabic-text" dir="rtl" style="margin-bottom: 20px; line-height: 2.2; font-size: 28px;">${hadith.ar}</p>
-                            <p class="translation-text" style="line-height: 1.8; color: var(--color-text-main); margin-bottom: 15px; font-size: 18px;"><strong>অর্থ:</strong> ${hadith.bn}</p>
+                            <p style="color: var(--color-text-muted); margin-bottom: 15px; font-weight: bold;"><i class="fa-solid fa-user"></i> বর্ণনাকারী: ${hadith.narrator || 'সাহাবী (রাঃ)'}</p>
+                            <p class="arabic-text" dir="rtl" style="margin-bottom: 20px; line-height: 2.2; font-size: 28px;">${hadith.ar || hadith.arabic}</p>
+                            <p class="translation-text" style="line-height: 1.8; color: var(--color-text-main); margin-bottom: 15px; font-size: 18px;"><strong>অর্থ:</strong> ${hadith.bn || hadith.translation}</p>
                         </div>
                     </div>
                 `;
             });
 
             hadithContainer.innerHTML = htmlContent;
-            applyFontSizes(); // ফন্ট সাইজ অ্যাপ্লাই করা
+            applyFontSizes(); 
 
         } else {
-            throw new Error("No data found");
+            throw new Error("Data not found locally or in API.");
         }
     } catch (error) {
-        hadithContainer.innerHTML = `<p class="error surface" style="text-align: center; color: red; padding: 30px;"><i class="fa-solid fa-triangle-exclamation fa-2x"></i><br><br>ইন্টারনেট কানেকশন চেক করুন অথবা API সাময়িকভাবে ডাউন আছে।</p>`;
+        hadithContainer.innerHTML = `<p class="error surface" style="text-align: center; color: red; padding: 30px;"><i class="fa-solid fa-triangle-exclamation fa-2x"></i><br><br>ডেটা লোড করা সম্ভব হয়নি। দয়া করে আপনার <code>data/hadith/bukhari.json</code> ফাইলটি সঠিকভাবে আছে কি না চেক করুন।</p>`;
     }
 }
 
@@ -280,6 +297,7 @@ function showBooksList() {
     document.getElementById('hadith-books-view').style.display = 'block';
     window.scrollTo(0, 0);
 }
+
 
 /* =========================================
    Prayer Times Module (Aladhan API)
