@@ -170,39 +170,40 @@ function showSurahList() {
     window.scrollTo(0, 0);
 }
 /* =========================================
-   Hadith Module
+   Hadith Module (100% Dynamic & Perfected)
 ========================================= */
+
 async function loadHadithBooks() {
     const booksGrid = document.getElementById('books-grid');
     if (!booksGrid) return;
 
-    booksGrid.innerHTML = '<p class="loading" style="grid-column: 1 / -1; text-align: center;"><i class="fa-solid fa-spinner fa-spin"></i> বইয়ের তালিকা লোড হচ্ছে...</p>';
+    booksGrid.innerHTML = '<p class="loading" style="grid-column: 1 / -1; text-align: center; font-size: 1.2rem;"><i class="fa-solid fa-spinner fa-spin"></i> বইয়ের তালিকা লোড হচ্ছে...</p>';
     
     const booksList = await fetchJSONData('../data/hadith/book-list.json');
     
     if (booksList && booksList.length > 0) {
         let htmlContent = '';
         booksList.forEach(book => {
+            // প্রতিটি বইয়ের কার্ডে loadBookData কল করা হচ্ছে
             htmlContent += `
-                <div class="module-card surface" style="cursor: pointer; border-bottom: 4px solid ${book.color};" onclick="loadBookData('${book.id}', '${book.name_bn}', '${book.name_ar}')">
-                    <div style="text-align: center; padding: 15px 0;">
+                <div class="module-card surface" style="cursor: pointer; border-bottom: 4px solid ${book.color}; transition: transform 0.2s;" onclick="loadBookData('${book.id}', '${book.color}')" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <div style="text-align: center; padding: 20px 0;">
                         <i class="fa-solid fa-book-quran" style="font-size: 3rem; color: ${book.color}; margin-bottom: 15px;"></i>
-                        <h3 style="margin-bottom: 5px;">${book.name_bn}</h3>
-                        <p style="color: var(--color-accent); font-family: var(--font-arabic); font-size: 1.5rem; margin-bottom: 10px;">${book.name_ar}</p>
-                        <p style="font-size: 0.85rem; color: var(--color-text-muted);"><i class="fa-solid fa-pen-nib"></i> ${book.compiler}</p>
-                        <p style="font-size: 0.85rem; color: var(--color-text-muted);"><i class="fa-solid fa-list-ol"></i> মোট হাদিস: ${book.total_hadith}</p>
+                        <h3 style="margin-bottom: 5px; font-size: 1.4rem;">${book.name_bn}</h3>
+                        <p style="color: var(--color-accent); font-family: var(--font-arabic); font-size: 1.5rem; margin-bottom: 15px;">${book.name_ar}</p>
+                        <p style="font-size: 0.9rem; color: var(--color-text-muted); margin-bottom: 5px;"><i class="fa-solid fa-pen-nib"></i> সংকলক: ${book.compiler}</p>
+                        <p style="font-size: 0.9rem; color: var(--color-text-muted);"><i class="fa-solid fa-list-ol"></i> মোট হাদিস: ${book.total_hadith}</p>
                     </div>
                 </div>
             `;
         });
         booksGrid.innerHTML = htmlContent;
     } else {
-        booksGrid.innerHTML = `<p class="error surface">ডেটা লোড করতে সমস্যা হয়েছে।</p>`;
+        booksGrid.innerHTML = `<p class="error surface" style="grid-column: 1 / -1; text-align: center; color: red;"><i class="fa-solid fa-triangle-exclamation"></i> ডেটা লোড করতে সমস্যা হয়েছে।</p>`;
     }
 }
 
-// নির্দিষ্ট বইয়ে ক্লিক করলে ডেমো ডেটা দেখানোর ফাংশন (আপাতত)
-function loadBookData(bookId, nameBn, nameAr) {
+async function loadBookData(bookId, themeColor) {
     document.getElementById('hadith-books-view').style.display = 'none';
     document.getElementById('single-book-view').style.display = 'block';
     window.scrollTo(0, 0);
@@ -210,25 +211,63 @@ function loadBookData(bookId, nameBn, nameAr) {
     const bookHeader = document.getElementById('book-header');
     const hadithContainer = document.getElementById('hadith-container');
 
-    bookHeader.innerHTML = `
-        <h2 style="color: var(--color-primary); font-size: 2rem; text-align: center; margin-bottom: 10px;">${nameBn} <span style="font-family: var(--font-arabic); color: var(--color-accent);">(${nameAr})</span></h2>
-    `;
+    hadithContainer.innerHTML = '<p class="loading" style="text-align: center; font-size: 1.2rem;"><i class="fa-solid fa-spinner fa-spin"></i> হাদিস লোড হচ্ছে...</p>';
 
-    // ডেমো হাদিস রেন্ডার করা (পরবর্তীতে আমরা API বা JSON থেকে আনবো)
-    hadithContainer.innerHTML = `
-        <div class="evidence-card surface" style="margin-bottom: 25px; padding: 25px;">
-            <div class="evidence-header" style="margin-bottom: 20px;">
-                <span class="badge badge-hadith" style="font-size: 1rem; padding: 5px 15px;"><i class="fa-solid fa-book-open"></i> হাদিস ১</span>
-            </div>
-            <div class="evidence-body">
-                <p class="arabic-text" dir="rtl" style="margin-bottom: 20px; line-height: 2.2;">إِنَّمَا الأَعْمَالُ بِالنِّيَّاتِ، وَإِنَّمَا لِكُلِّ امْرِئٍ مَا نَوَى</p>
-                <p class="translation-text" style="line-height: 1.8; color: var(--color-text-main);"><strong>অর্থ:</strong> নিশ্চয়ই সমস্ত কাজ নিয়তের ওপর নির্ভরশীল। আর প্রতিটি মানুষ তাই পাবে, যার নিয়ত সে করবে। (সহীহ বুখারী: ১)</p>
-            </div>
-        </div>
-        <p style="text-align: center; color: var(--color-text-muted); margin-top: 30px;">(এখানে পরবর্তীতে ডাইনামিকভাবে ক্লাউড থেকে হাজার হাজার হাদিস লোড হবে...)</p>
-    `;
-    
-    applyFontSizes(); // ফন্ট সাইজ অ্যাপ্লাই করা
+    // JSON ফাইল থেকে ডাইনামিকভাবে নির্দিষ্ট বইয়ের ডেটা আনা
+    const bookData = await fetchJSONData(`../data/hadith/${bookId}.json`);
+
+    if (bookData) {
+        // বইয়ের হেডার রেন্ডার করা
+        bookHeader.innerHTML = `
+            <h2 style="color: ${themeColor}; font-size: 2rem; text-align: center; margin-bottom: 10px;">${bookData.book_meta.name_bn} <span style="font-family: var(--font-arabic); color: var(--color-accent);">(${bookData.book_meta.name_ar})</span></h2>
+            <p style="text-align: center; color: var(--color-text-muted);"><i class="fa-solid fa-pen-nib"></i> ${bookData.book_meta.compiler} | <i class="fa-solid fa-list-ol"></i> হাদিস সংখ্যা: ${bookData.book_meta.total_hadith}</p>
+        `;
+
+        let htmlContent = '';
+
+        // অধ্যায় এবং হাদিসগুলো লুপ করে রেন্ডার করা
+        bookData.chapters.forEach(chapter => {
+            htmlContent += `
+                <div class="chapter-section" style="margin-bottom: 40px;">
+                    <div class="surface" style="background: ${themeColor}; color: white; padding: 15px 20px; border-radius: var(--border-radius); margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                        <h3 style="margin: 0; font-size: 1.2rem;"><i class="fa-solid fa-folder-open"></i> অধ্যায় ${chapter.chapter_id}: ${chapter.chapter_name_bn}</h3>
+                        <span style="font-family: var(--font-arabic); font-size: 1.5rem;">${chapter.chapter_name_ar}</span>
+                    </div>
+            `;
+
+            chapter.hadiths.forEach(hadith => {
+                htmlContent += `
+                    <div class="evidence-card surface" style="margin-bottom: 25px; padding: 25px; border-left: 4px solid ${themeColor};">
+                        <div class="evidence-header" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border); padding-bottom: 15px;">
+                            <span class="badge badge-hadith" style="background: ${themeColor}; color: white; padding: 5px 15px; border-radius: 20px;"><i class="fa-solid fa-book-open"></i> হাদিস ${hadith.hadith_id}</span>
+                            <span style="background: var(--color-bg-body); padding: 5px 15px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; color: ${hadith.grade === 'সহীহ' ? 'var(--color-primary)' : 'var(--color-accent)'};"><i class="fa-solid fa-certificate"></i> মান: ${hadith.grade}</span>
+                        </div>
+                        
+                        <div class="evidence-body">
+                            <p style="color: var(--color-text-muted); margin-bottom: 15px; font-weight: bold;"><i class="fa-solid fa-user"></i> বর্ণনাকারী: ${hadith.narrator}</p>
+                            <p class="arabic-text" dir="rtl" style="margin-bottom: 20px; line-height: 2.2;">${hadith.arabic}</p>
+                            <p class="translation-text" style="line-height: 1.8; color: var(--color-text-main); margin-bottom: 15px;"><strong>অর্থ:</strong> ${hadith.translation}</p>
+                        </div>
+                        
+                        ${hadith.explanation ? `
+                            <div class="evidence-explanation" style="background: var(--color-bg-body); padding: 15px; border-radius: 10px; border-left: 3px solid var(--color-accent);">
+                                <strong><i class="fa-solid fa-lightbulb" style="color: var(--color-accent);"></i> সংক্ষিপ্ত ব্যাখ্যা:</strong>
+                                <p style="margin-top: 5px; font-size: 0.95rem;">${hadith.explanation}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+
+            htmlContent += `</div>`; // চ্যাপ্টার সেকশন শেষ
+        });
+
+        hadithContainer.innerHTML = htmlContent;
+        applyFontSizes(); // ইউজারের সেট করা ফন্ট সাইজ অ্যাপ্লাই করা
+
+    } else {
+        hadithContainer.innerHTML = `<p class="error surface" style="text-align: center; color: red; padding: 30px;"><i class="fa-solid fa-triangle-exclamation fa-2x"></i><br><br>এই বইয়ের ডেটা পাওয়া যায়নি। (${bookId}.json ফাইলটি চেক করুন)</p>`;
+    }
 }
 
 function showBooksList() {
