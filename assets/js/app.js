@@ -14,9 +14,12 @@ document.addEventListener('DOMContentLoaded', () => {
     } else if (currentPage === 'prayer-times.html') {
         loadPrayerTimes();
     } else if (currentPage === 'zakat.html') {
-        // যাকাত পেজে লোড করার সাথে সাথে কিছু করার নেই, ইউজার বাটনে ক্লিক করলে ফাংশন কল হবে
+        // Zakat module has no auto-load on start
+    } else if (currentPage === 'hisnul-muslim.html') {
+        loadHisnulMuslimData(); // নতুন মডিউল কল করা হলো
     }
 });
+
 
 
 
@@ -410,4 +413,84 @@ function calculateZakat() {
             <p style="color: var(--color-text-muted); margin-top: 10px;">আপনার ঋণ বা দেনার পরিমাণ আপনার সম্পদের চেয়ে বেশি অথবা সমান।</p>
         `;
     }
+}
+/* =========================================
+   Hisnul Muslim Module
+========================================= */
+let hisnulDataCache = null;
+
+async function loadHisnulMuslimData() {
+    const categoriesGrid = document.getElementById('categories-grid');
+    if (!categoriesGrid) return;
+
+    categoriesGrid.innerHTML = '<p class="loading" style="grid-column: 1 / -1; text-align: center;"><i class="fa-solid fa-spinner fa-spin"></i> দোয়ার তালিকা লোড হচ্ছে...</p>';
+    
+    // JSON ডেটা ফেচ করা
+    hisnulDataCache = await fetchJSONData('../data/hisnul-muslim.json');
+    
+    if (hisnulDataCache && hisnulDataCache.categories) {
+        let htmlContent = '';
+        hisnulDataCache.categories.forEach((category, index) => {
+            htmlContent += `
+                <div class="module-card surface" style="cursor: pointer; border-bottom: 4px solid ${category.color || 'var(--color-primary)'}; transition: transform 0.2s;" onclick="showDuaCategory(${index})" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <div style="text-align: center; padding: 20px 0;">
+                        <i class="fa-solid ${category.icon}" style="font-size: 2.5rem; color: ${category.color || 'var(--color-primary)'}; margin-bottom: 15px;"></i>
+                        <h3 style="margin-bottom: 5px; font-size: 1.3rem;">${category.title}</h3>
+                        <p style="font-size: 0.9rem; color: var(--color-text-muted);"><i class="fa-solid fa-list-ol"></i> মোট দোয়া: ${category.duas.length}</p>
+                    </div>
+                </div>
+            `;
+        });
+        categoriesGrid.innerHTML = htmlContent;
+    } else {
+        categoriesGrid.innerHTML = `<p class="error surface" style="grid-column: 1 / -1; text-align: center; color: red;"><i class="fa-solid fa-triangle-exclamation"></i> ডেটা লোড করতে সমস্যা হয়েছে।</p>`;
+    }
+}
+
+function showDuaCategory(categoryIndex) {
+    if (!hisnulDataCache) return;
+
+    const category = hisnulDataCache.categories[categoryIndex];
+    
+    document.getElementById('hisnul-categories-view').style.display = 'none';
+    document.getElementById('single-category-view').style.display = 'block';
+    window.scrollTo(0, 0);
+
+    const categoryHeader = document.getElementById('category-header');
+    const duasContainer = document.getElementById('duas-container');
+
+    categoryHeader.innerHTML = `
+        <i class="fa-solid ${category.icon}" style="font-size: 2rem; color: ${category.color || 'var(--color-primary)'}; margin-bottom: 10px;"></i>
+        <h2 style="color: var(--color-primary); font-size: 1.8rem; margin-bottom: 5px;">${category.title}</h2>
+    `;
+
+    let htmlContent = '';
+    category.duas.forEach((dua, idx) => {
+        htmlContent += `
+            <div class="evidence-card surface" style="margin-bottom: 25px; padding: 25px; border-left: 4px solid ${category.color || 'var(--color-primary)'};">
+                <div class="evidence-header" style="margin-bottom: 20px; border-bottom: 1px solid var(--color-border); padding-bottom: 15px;">
+                    <span class="badge" style="background: ${category.color || 'var(--color-primary)'}; color: white; padding: 5px 15px; border-radius: 20px;"><i class="fa-solid fa-pray"></i> দোয়া ${idx + 1}</span>
+                </div>
+                
+                <div class="evidence-body">
+                    <p class="arabic-text" dir="rtl" style="margin-bottom: 20px; line-height: 2.2; color: var(--color-primary-dark); text-align: right;">${dua.arabic}</p>
+                    <p class="pronunciation-text" style="color: var(--color-text-muted); margin-bottom: 15px; font-style: italic;"><strong>উচ্চারণ:</strong> ${dua.pronunciation}</p>
+                    <p class="translation-text" style="line-height: 1.8; color: var(--color-text-main); margin-bottom: 15px;"><strong>অর্থ:</strong> ${dua.translation}</p>
+                </div>
+                
+                <div class="evidence-explanation" style="background: var(--color-bg-body); padding: 10px 15px; border-radius: 5px; font-size: 0.9rem; color: var(--color-text-muted);">
+                    <i class="fa-solid fa-book-open"></i> <strong>রেফারেন্স:</strong> ${dua.reference}
+                </div>
+            </div>
+        `;
+    });
+
+    duasContainer.innerHTML = htmlContent;
+    applyFontSizes(); // ইউজারের ফন্ট সেটিং অ্যাপ্লাই করা
+}
+
+function showHisnulCategories() {
+    document.getElementById('single-category-view').style.display = 'none';
+    document.getElementById('hisnul-categories-view').style.display = 'block';
+    window.scrollTo(0, 0);
 }
