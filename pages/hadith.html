@@ -1,1 +1,64 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>হাদিস সংকলন | Hidayah</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/theme.css">
+    <link rel="stylesheet" href="../assets/css/base.css">
+    <link rel="stylesheet" href="../assets/css/layout.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+</head>
+<body>
+    <div id="header-placeholder"></div>
 
+    <div class="settings-bar container" style="display: flex; justify-content: flex-end; padding: 15px 16px;">
+        <button id="theme-toggle-btn" onclick="toggleTheme()" class="theme-btn">
+            <i class="fa-solid fa-moon"></i> ডার্ক মোড
+        </button>
+    </div>
+
+    <main class="container">
+        
+        <div id="hadith-books-view">
+            <div class="section-header">
+                <h2><i class="fa-solid fa-book"></i> হাদিস সংকলন</h2>
+                <p>নির্ভরযোগ্য হাদিস গ্রন্থসমূহ</p>
+            </div>
+            <div id="books-grid" class="module-grid" style="margin-bottom: 50px;"></div>
+        </div>
+
+        <div id="single-book-view" style="display: none;">
+            <div style="margin-bottom: 20px;">
+                <button onclick="showBooksList()" class="theme-btn">
+                    <i class="fa-solid fa-arrow-left"></i> বইয়ের তালিকায় ফিরুন
+                </button>
+            </div>
+            
+            <div id="book-header" class="page-header surface" style="padding: 20px; margin-bottom: 20px;"></div>
+            
+            <div class="reading-settings surface" style="padding: 10px 15px; border-radius: 30px; display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                <span style="font-weight: 600; color: var(--color-primary); font-size: 0.9rem;">
+                    <i class="fa-solid fa-text-height"></i> ফন্ট:
+                </span>
+                <div style="display: flex; gap: 5px;">
+                    <button onclick="changeFontSize('arabic', 2)" class="theme-btn" style="padding: 4px 10px; font-size: 0.8rem;">আরবি <i class="fa-solid fa-plus"></i></button>
+                    <button onclick="changeFontSize('arabic', -2)" class="theme-btn" style="padding: 4px 10px; font-size: 0.8rem;">আরবি <i class="fa-solid fa-minus"></i></button>
+                    <button onclick="changeFontSize('translation', 1)" class="theme-btn" style="padding: 4px 10px; font-size: 0.8rem;">বাংলা <i class="fa-solid fa-plus"></i></button>
+                    <button onclick="changeFontSize('translation', -1)" class="theme-btn" style="padding: 4px 10px; font-size: 0.8rem;">বাংলা <i class="fa-solid fa-minus"></i></button>
+                </div>
+            </div>
+
+            <div id="hadith-container" class="evidences-container" style="margin-bottom: 50px;"></div>
+        </div>
+
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="../assets/js/utils.js"></script>
+    <script src="../assets/js/app.js"></script>
+</body>
+</html>
