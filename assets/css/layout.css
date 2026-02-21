@@ -1,8 +1,11 @@
 /* assets/css/layout.css */
+
+/* Header Styles */
 .site-header {
     background-color: var(--color-primary);
     color: #fff;
-    padding: var(--spacing-md) 0;
+    /* iOS এর নচ ডিসপ্লের জন্য টপ সেফ-এরিয়া প্যাডিং */
+    padding: max(var(--spacing-md), env(safe-area-inset-top)) 0 var(--spacing-md) 0;
 }
 
 .header-content {
@@ -17,13 +20,28 @@
     gap: var(--spacing-lg);
 }
 
-.main-nav a:hover, .main-nav a.active {
+/* শুধুমাত্র মাউস ডিভাইসের জন্য হোভার (Sticky Hover রোধ করতে) */
+@media (hover: hover) and (pointer: fine) {
+    .main-nav a:hover {
+        color: var(--color-accent);
+    }
+}
+
+.main-nav a.active {
     color: var(--color-accent);
 }
 
+/* Hero Section */
 .hero {
     text-align: center;
-    padding: 60px 0 40px;
+    /* মোবাইলে স্পেস বাঁচাতে প্যাডিং একটু রেসপন্সিভ করা হলো */
+    padding: 40px 0 30px; 
+}
+
+@media (min-width: 768px) {
+    .hero {
+        padding: 60px 0 40px;
+    }
 }
 
 .hero-title {
@@ -31,35 +49,63 @@
     margin-bottom: var(--spacing-sm);
 }
 
+/* Module Grid - অ্যাপের মতো ২ কলাম গ্রিড করার জন্য minmax আপডেট করা হয়েছে */
 .module-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: var(--spacing-lg);
-    padding: 40px 0;
+    /* 150px এর কারণে মোবাইলে সুন্দর ২ কলামের গ্রিড তৈরি হবে */
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--spacing-md, 15px);
+    padding: 20px 0;
 }
 
+@media (min-width: 768px) {
+    .module-grid {
+        gap: var(--spacing-lg);
+        padding: 40px 0;
+    }
+}
+
+/* Module Card */
 .module-card {
     border: 1px solid var(--color-border);
-    border-radius: var(--border-radius);
-    padding: var(--spacing-lg);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-radius: var(--border-radius, 12px);
+    padding: var(--spacing-lg, 20px);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    /* কার্ডের কনটেন্ট সেন্টারে রাখার জন্য */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
 }
 
-.module-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+/* Desktop Hover Effects */
+@media (hover: hover) and (pointer: fine) {
+    .module-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        border-color: var(--color-primary);
+    }
+}
+
+/* Mobile Active (Tap) Effect */
+.module-card:active {
+    transform: scale(0.96);
     border-color: var(--color-primary);
 }
 
 .module-card h3 {
     color: var(--color-primary);
     margin-bottom: var(--spacing-sm);
+    font-size: 1.2rem;
 }
 
+/* Footer - Bottom Navigation এর জন্য ক্লিয়ারেন্স */
 .site-footer {
     border-top: 1px solid var(--color-border);
     text-align: center;
-    padding: var(--spacing-lg) 0;
     margin-top: 40px;
     color: var(--color-text-muted);
+    /* নিচে ফিক্সড নেভিগেশন বারের জন্য অতিরিক্ত প্যাডিং (প্রায় 80px), যাতে কনটেন্ট বারের নিচে ঢেকে না যায় */
+    padding: var(--spacing-lg) 0 calc(80px + env(safe-area-inset-bottom));
 }
