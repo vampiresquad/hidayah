@@ -77,33 +77,44 @@ async function fetchJSONData(url) {
     }
 }
 
+/* =========================================
+   App Navigation & Layout Rendering
+========================================= */
+
 function loadCommonComponents() {
     const basePath = window.location.pathname.includes('/pages/') ? '../' : './';
     
+    // টপ অ্যাপ বার (গ্লাসমরফিজম ইফেক্টসহ)
     const headerHTML = `
-        <header class="site-header">
-            <div class="container header-content">
-                <a href="${basePath}index.html" class="logo" style="display:flex; align-items:center; gap:10px;">
-                    <i class="fa-solid fa-leaf"></i> <h2>Hidayah</h2>
-                </a>
-                <nav class="main-nav">
-                    <ul>
-                        <li><a href="${basePath}index.html"><i class="fa-solid fa-house"></i> মূল পাতা</a></li>
-                        <li><a href="${basePath}pages/quran.html"><i class="fa-solid fa-book-open"></i> কুরআন</a></li>
-                        <li><a href="${basePath}pages/pillars.html"><i class="fa-solid fa-mosque"></i> ভিত্তি</a></li>
-                    </ul>
-                </nav>
-            </div>
+        <header style="position: sticky; top: 0; z-index: 1000; background: var(--color-bg-surface); opacity: 0.95; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--color-border); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-sm);">
+            <a href="${basePath}index.html" style="text-decoration: none; display: flex; align-items: center; gap: 10px; color: var(--color-primary); font-size: 1.4rem; font-weight: bold;">
+                <i class="fa-solid fa-leaf"></i> Hidayah
+            </a>
+            <button id="theme-toggle-btn" onclick="toggleTheme()" style="background: var(--color-bg-body); border: 1px solid var(--color-border); padding: 8px 12px; border-radius: 20px; color: var(--color-text-main); cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 600; box-shadow: var(--shadow-sm);">
+                </button>
         </header>
     `;
 
+    // বটম নেভিগেশন বার (মোবাইল অ্যাপের মতো নিচে ফিক্সড থাকবে)
     const footerHTML = `
-        <footer class="site-footer">
-            <div class="container footer-content">
-                <p>&copy; 2026 Hidayah. সম্পূর্ণ বিনামূল্যে, বিজ্ঞাপনমুক্ত ও অলাভজনক উদ্দেশ্যে পরিচালিত।</p>
-                <p class="disclaimer">সকল তথ্য কুরআন ও সহীহ সুন্নাহ ভিত্তিক।</p>
-            </div>
-        </footer>
+        <nav style="position: fixed; bottom: 0; width: 100%; z-index: 1000; background: var(--color-bg-surface); opacity: 0.95; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border-top: 1px solid var(--color-border); display: flex; justify-content: space-around; align-items: center; padding: 10px 5px 20px 5px; box-shadow: 0 -4px 15px rgba(0,0,0,0.05);">
+            <a href="${basePath}index.html" class="nav-item">
+                <i class="fa-solid fa-house"></i>
+                <span>হোম</span>
+            </a>
+            <a href="${basePath}pages/quran.html" class="nav-item">
+                <i class="fa-solid fa-book-open-reader"></i>
+                <span>কুরআন</span>
+            </a>
+            <a href="${basePath}pages/hadith.html" class="nav-item">
+                <i class="fa-solid fa-book"></i>
+                <span>হাদিস</span>
+            </a>
+            <a href="${basePath}pages/prayer-times.html" class="nav-item">
+                <i class="fa-solid fa-clock"></i>
+                <span>ওয়াক্ত</span>
+            </a>
+        </nav>
     `;
 
     const headerElement = document.getElementById('header-placeholder');
@@ -112,11 +123,13 @@ function loadCommonComponents() {
     if (headerElement) headerElement.innerHTML = headerHTML;
     if (footerElement) footerElement.innerHTML = footerHTML;
 
+    // টপ বারের ডার্ক মোড বাটনের টেক্সট ঠিক করা
+    updateThemeButtonText();
     highlightActiveLink();
 }
 
 function highlightActiveLink() {
-    const links = document.querySelectorAll('.main-nav a');
+    const links = document.querySelectorAll('.nav-item');
     const currentPath = window.location.pathname.split('/').pop() || 'index.html';
     
     links.forEach(link => {
@@ -127,6 +140,7 @@ function highlightActiveLink() {
         }
     });
 }
+
 
 function createEvidenceCard(evidence) {
     const badgeClass = evidence.type === 'quran' ? 'badge-quran' : 'badge-hadith';
